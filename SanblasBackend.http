@@ -1,0 +1,6 @@
+@SanblasBackend_HostAddress = http://localhost:5146
+
+GET {{SanblasBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
