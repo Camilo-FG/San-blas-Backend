@@ -8,5 +8,5 @@ public class User {
 	public string Password { get; set; }
 	public string UserRole { get; set; }
 	public bool State { get; set; } //esto no deberia de ser IsActive o Status? o UserStatus?
-	public Date CreationDate { get; set; }
+	public DateTime CreationDate { get; set; }
 }
