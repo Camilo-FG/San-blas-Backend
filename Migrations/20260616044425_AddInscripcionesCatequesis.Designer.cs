@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SanblasBackend.Data;
@@ -11,9 +12,11 @@ using SanblasBackend.Data;
 namespace SanblasBackend.Migrations
 {
     [DbContext(typeof(GlobalContex))]
-    partial class GlobalContexModelSnapshot : ModelSnapshot
+    [Migration("20260616044425_AddInscripcionesCatequesis")]
+    partial class AddInscripcionesCatequesis
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

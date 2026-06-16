@@ -17,6 +17,7 @@ builder.Services.AddDbContext<GlobalContex>(options =>
 
 
 builder.Services.AddScoped<IFormSacraService, FormSacraService>();
+builder.Services.AddScoped<IInscripcionCatequesisService, InscripcionCatequesisService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
