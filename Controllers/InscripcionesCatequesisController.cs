@@ -8,11 +8,54 @@ namespace SanblasBackend.Controllers;
 [Route("api/inscripciones-catequesis")]
 public class InscripcionesCatequesisController : ControllerBase
 {
+    private static readonly HashSet<string> EstadosValidos = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Pendiente",
+        "Aprobada",
+        "Rechazada"
+    };
+
     private readonly IInscripcionCatequesisService _inscripcionCatequesisService;
 
     public InscripcionesCatequesisController(IInscripcionCatequesisService inscripcionCatequesisService)
     {
         _inscripcionCatequesisService = inscripcionCatequesisService;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ListarInscripciones([FromQuery] string? estado)
+    {
+        string? estadoNormalizado = null;
+
+        if (!string.IsNullOrWhiteSpace(estado))
+        {
+            estadoNormalizado = EstadosValidos
+                .FirstOrDefault(e => e.Equals(estado, StringComparison.OrdinalIgnoreCase));
+
+            if (estadoNormalizado is null)
+            {
+                return BadRequest(new
+                {
+                    mensaje = "El estado debe ser Pendiente, Aprobada o Rechazada."
+                });
+            }
+        }
+
+        var inscripciones = await _inscripcionCatequesisService.ObtenerInscripcionesAsync(estadoNormalizado);
+        return Ok(inscripciones);
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> ObtenerInscripcionPorId(int id)
+    {
+        var inscripcion = await _inscripcionCatequesisService.ObtenerInscripcionPorIdAsync(id);
+
+        if (inscripcion is null)
+        {
+            return NotFound(new { mensaje = $"No se encontró una inscripción con id {id}." });
+        }
+
+        return Ok(inscripcion);
     }
 
     [HttpPost]
