@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SanblasBackend.Models;
+using SanblasBackend.Models.EntitiesRegistroSacramentos;
+using SanblasBackend.Models.EntitiesUsuarios;
 
 namespace SanblasBackend.Data
 {

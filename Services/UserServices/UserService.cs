@@ -18,7 +18,7 @@ namespace SanblasBackend.Services
 
         public async Task<IEnumerable<UserResponseDto>> GetAllUsers()
         {
-            var users = await _context.User.ToListAsync();
+            var users = await _context.Users.ToListAsync();
 
             return users.Select(u => new UserResponseDto
             {
@@ -34,7 +34,7 @@ namespace SanblasBackend.Services
 
         public async Task<UserResponseDto?> GetUserById(int id)
         {
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
             if (user == null) return null;
 
             return new UserResponseDto
@@ -52,11 +52,11 @@ namespace SanblasBackend.Services
         public async Task<UserResponseDto> CreateUser(UserCreateDto dto, User? currentUser)
         {
             //validacion de email único
-            if (await _context.User.AnyAsync(u => u.Email == dto.Email))
+            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
                 throw new Exception("El email ya está registrado.");
 
             //validacion de username único
-            if (await _context.User.AnyAsync(u => u.UserName == dto.UserName))
+            if (await _context.Users.AnyAsync(u => u.UserName == dto.UserName))
                 throw new Exception("El nombre de usuario ya está en uso.");
 
             //validacion de contraseñas que coincidan
@@ -86,7 +86,7 @@ namespace SanblasBackend.Services
                 CreationDate = DateTime.Now
             };
 
-            _context.User.Add(newUser);
+            _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
             return new UserResponseDto
@@ -104,7 +104,7 @@ namespace SanblasBackend.Services
         public async Task<UserResponseDto?> UpdateUser(int id, UserUpdateDto dto, User currentUser)
         {
           
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
             if (user == null) return null;
 
             if (currentUser.UserRole != true && currentUser.Id != id)
@@ -112,13 +112,13 @@ namespace SanblasBackend.Services
 
             if (!string.IsNullOrEmpty(dto.Email) && dto.Email != user.Email)
             {
-                if (await _context.User.AnyAsync(u => u.Email == dto.Email && u.Id != id))
+                if (await _context.Users.AnyAsync(u => u.Email == dto.Email && u.Id != id))
                     throw new Exception("El email ya está registrado por otro usuario.");
             }
 
             if (!string.IsNullOrEmpty(dto.UserName) && dto.UserName != user.UserName)
             {
-                if (await _context.User.AnyAsync(u => u.UserName == dto.UserName && u.Id != id))
+                if (await _context.Users.AnyAsync(u => u.UserName == dto.UserName && u.Id != id))
                     throw new Exception("El nombre de usuario ya está en uso.");
             }
 
