@@ -1,4 +1,4 @@
-namespace SanBlasBackend.Models;
+namespace SanblasBackend.Models;
 
 public class User { 
 	public int Id { get; set; }
@@ -6,7 +6,7 @@ public class User {
 	public string Email { get; set; }
 	public int PhoneNumber { get; set; }
 	public string Password { get; set; }
-	public string UserRole { get; set; }
+	public string Role { get; set; }
 	public bool State { get; set; } //esto no deberia de ser IsActive o Status? o UserStatus?
 	public DateTime CreationDate { get; set; }
 }

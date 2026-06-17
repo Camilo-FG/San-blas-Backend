@@ -17,6 +17,7 @@ namespace SanblasBackend.Data
         public DbSet<CondicionSaludCatequizando> CondicionesSaludCatequizando { get; set; }
         public DbSet<MadreCatequizando> MadresCatequizando { get; set; }
         public DbSet<Donacion> Donaciones { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

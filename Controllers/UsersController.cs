@@ -36,7 +36,7 @@ namespace SanblasBackend.Controllers
             try
             {
                 var result = await _UserService.CreateUserAccount(dto);
-                return CreatedAtAction(nameof(GetById), new { id = result.id }, result);
+                return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
             }
             catch (System.Exception ex)
             {
@@ -48,6 +48,12 @@ namespace SanblasBackend.Controllers
                 });
             }
         }
-        //falta hacer un update
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserCreateDTO dto)
+        {
+            var result = await _UserService.UpdateUser(id, dto);
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
     }
 }

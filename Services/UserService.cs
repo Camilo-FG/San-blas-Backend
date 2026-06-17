@@ -16,25 +16,46 @@ namespace SanblasBackend.Services
 
         public async Task<IEnumerable<User>> GetAllUsers()
         {
-            return await _context.User.ToListAsync();
+            return await _context.Users.ToListAsync();
         }
 
         public async Task<User?> GetUserById(int id)
         {
-            return await _context.User.FindAsync(id);
+            return await _context.Users.FindAsync(id);
         }
 
-        public async Task<User> CreateUser(UserCreateDTO dto) 
+        public async Task<User> CreateUserAccount(UserCreateDTO dto) 
         {
-            var solicitud = new User
+            var user = new User
             {
-                //falta poner los datos del DTO
+                Username = dto.Username,
+                Email = dto.Email,
+                Password = dto.Password, // Recordatorio: En producción usar Hashing
+                Role = dto.Role,
+                PhoneNumber = dto.PhoneNumber,
+                State = true,
+                CreationDate = DateTime.UtcNow
             };
 
-            _context.Users.Add(solicitud);
+            _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return solicitud;
+            return user;
+        }
+
+        public async Task<User?> UpdateUser(int id, UserCreateDTO dto)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return null;
+
+            user.Username = dto.Username;
+            user.Email = dto.Email;
+            user.Password = dto.Password;
+            user.Role = dto.Role;
+            user.PhoneNumber = dto.PhoneNumber;
+
+            await _context.SaveChangesAsync();
+            return user;
         }
         //falta el update
     }
