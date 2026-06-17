@@ -18,6 +18,11 @@ namespace SanblasBackend.Data
         public DbSet<MadreCatequizando> MadresCatequizando { get; set; }
         public DbSet<Donacion> Donaciones { get; set; }
 
+         public DbSet<Bautismo> Bautismos { get; set; }
+        public DbSet<Comunion> Comuniones { get; set; }
+        public DbSet<Confirmacion> Confirmaciones { get; set; }
+        public DbSet<Matrimonio> Matrimonios { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
