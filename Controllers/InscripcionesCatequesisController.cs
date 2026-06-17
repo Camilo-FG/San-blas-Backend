@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SanblasBackend.DTOs;
 using SanblasBackend.Services;
+using SanblasBackend.Utils;
 
 namespace SanblasBackend.Controllers;
 
@@ -8,13 +10,6 @@ namespace SanblasBackend.Controllers;
 [Route("api/inscripciones-catequesis")]
 public class InscripcionesCatequesisController : ControllerBase
 {
-    private static readonly HashSet<string> EstadosValidos = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "Pendiente",
-        "Aprobada",
-        "Rechazada"
-    };
-
     private readonly IInscripcionCatequesisService _inscripcionCatequesisService;
 
     public InscripcionesCatequesisController(IInscripcionCatequesisService inscripcionCatequesisService)
@@ -29,15 +24,9 @@ public class InscripcionesCatequesisController : ControllerBase
 
         if (!string.IsNullOrWhiteSpace(estado))
         {
-            estadoNormalizado = EstadosValidos
-                .FirstOrDefault(e => e.Equals(estado, StringComparison.OrdinalIgnoreCase));
-
-            if (estadoNormalizado is null)
+            if (!InscripcionCatequesisValidaciones.EsEstadoValido(estado, out estadoNormalizado))
             {
-                return BadRequest(new
-                {
-                    mensaje = "El estado debe ser Pendiente, Aprobada o Rechazada."
-                });
+                return BadRequest(new { mensaje = InscripcionCatequesisValidaciones.MensajeEstadoInvalido });
             }
         }
 
@@ -48,11 +37,16 @@ public class InscripcionesCatequesisController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> ObtenerInscripcionPorId(int id)
     {
+        if (!InscripcionCatequesisValidaciones.EsIdValido(id))
+        {
+            return BadRequest(new { mensaje = InscripcionCatequesisValidaciones.MensajeIdInvalido });
+        }
+
         var inscripcion = await _inscripcionCatequesisService.ObtenerInscripcionPorIdAsync(id);
 
         if (inscripcion is null)
         {
-            return NotFound(new { mensaje = $"No se encontró una inscripción con id {id}." });
+            return NotFound(new { mensaje = InscripcionCatequesisValidaciones.MensajeNoEncontrado });
         }
 
         return Ok(inscripcion);
@@ -63,15 +57,7 @@ public class InscripcionesCatequesisController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(new
-            {
-                mensaje = "Errores de validación.",
-                errores = ModelState
-                    .Where(entry => entry.Value?.Errors.Count > 0)
-                    .ToDictionary(
-                        entry => entry.Key,
-                        entry => entry.Value!.Errors.Select(error => error.ErrorMessage).ToArray())
-            });
+            return BadRequest(CrearRespuestaValidacion(ModelState));
         }
 
         try
@@ -90,39 +76,45 @@ public class InscripcionesCatequesisController : ControllerBase
         int id,
         [FromBody] ActualizarEstadoInscripcionCatequesisRequest request)
     {
+        if (!InscripcionCatequesisValidaciones.EsIdValido(id))
+        {
+            return BadRequest(new { mensaje = InscripcionCatequesisValidaciones.MensajeIdInvalido });
+        }
+
         if (!ModelState.IsValid)
         {
-            return BadRequest(new
-            {
-                mensaje = "Errores de validación.",
-                errores = ModelState
-                    .Where(entry => entry.Value?.Errors.Count > 0)
-                    .ToDictionary(
-                        entry => entry.Key,
-                        entry => entry.Value!.Errors.Select(error => error.ErrorMessage).ToArray())
-            });
+            return BadRequest(CrearRespuestaValidacion(ModelState));
         }
 
-        var estadoNormalizado = EstadosValidos
-            .FirstOrDefault(e => e.Equals(request.Estado, StringComparison.OrdinalIgnoreCase));
-
-        if (estadoNormalizado is null)
+        if (!InscripcionCatequesisValidaciones.EsEstadoValido(request.Estado, out var estadoNormalizado))
         {
-            return BadRequest(new
-            {
-                mensaje = "El estado debe ser Pendiente, Aprobada o Rechazada."
-            });
+            return BadRequest(new { mensaje = InscripcionCatequesisValidaciones.MensajeEstadoInvalido });
         }
 
-        request.Estado = estadoNormalizado;
+        request.Estado = estadoNormalizado!;
 
         var response = await _inscripcionCatequesisService.ActualizarEstadoAsync(id, request);
 
         if (response is null)
         {
-            return NotFound(new { mensaje = $"No se encontró una inscripción con id {id}." });
+            return NotFound(new { mensaje = InscripcionCatequesisValidaciones.MensajeNoEncontrado });
         }
 
         return Ok(response);
+    }
+
+    private static object CrearRespuestaValidacion(ModelStateDictionary modelState)
+    {
+        var errores = modelState
+            .Where(entry => entry.Value?.Errors.Count > 0)
+            .ToDictionary(
+                entry => entry.Key,
+                entry => entry.Value!.Errors.Select(error => error.ErrorMessage).ToArray());
+
+        var mensaje = errores.Values
+            .SelectMany(errorMessages => errorMessages)
+            .FirstOrDefault() ?? "Errores de validación.";
+
+        return new { mensaje, errores };
     }
 }

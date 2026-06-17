@@ -13,7 +13,11 @@ public class NotFutureDateAttribute : ValidationAttribute
 
         if (value is DateOnly date && date > DateOnly.FromDateTime(DateTime.Today))
         {
-            return new ValidationResult("La fecha de nacimiento no puede ser futura.");
+            var mensaje = string.IsNullOrWhiteSpace(ErrorMessage)
+                ? "La fecha no puede ser futura."
+                : ErrorMessage;
+
+            return new ValidationResult(mensaje);
         }
 
         return ValidationResult.Success;
