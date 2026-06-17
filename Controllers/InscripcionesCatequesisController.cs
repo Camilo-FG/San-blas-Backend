@@ -84,4 +84,45 @@ public class InscripcionesCatequesisController : ControllerBase
             return BadRequest(new { mensaje = ex.Message });
         }
     }
+
+    [HttpPut("{id:int}/estado")]
+    public async Task<IActionResult> ActualizarEstado(
+        int id,
+        [FromBody] ActualizarEstadoInscripcionCatequesisRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new
+            {
+                mensaje = "Errores de validación.",
+                errores = ModelState
+                    .Where(entry => entry.Value?.Errors.Count > 0)
+                    .ToDictionary(
+                        entry => entry.Key,
+                        entry => entry.Value!.Errors.Select(error => error.ErrorMessage).ToArray())
+            });
+        }
+
+        var estadoNormalizado = EstadosValidos
+            .FirstOrDefault(e => e.Equals(request.Estado, StringComparison.OrdinalIgnoreCase));
+
+        if (estadoNormalizado is null)
+        {
+            return BadRequest(new
+            {
+                mensaje = "El estado debe ser Pendiente, Aprobada o Rechazada."
+            });
+        }
+
+        request.Estado = estadoNormalizado;
+
+        var response = await _inscripcionCatequesisService.ActualizarEstadoAsync(id, request);
+
+        if (response is null)
+        {
+            return NotFound(new { mensaje = $"No se encontró una inscripción con id {id}." });
+        }
+
+        return Ok(response);
+    }
 }

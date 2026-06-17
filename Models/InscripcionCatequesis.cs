@@ -7,6 +7,8 @@ public class InscripcionCatequesis
     public string NivelAInscribirse { get; set; } = string.Empty;
     public string Estado { get; set; } = "Pendiente";
     public DateTime FechaSolicitud { get; set; }
+    public string? ObservacionAdministrativa { get; set; }
+    public DateTime? FechaActualizacionEstado { get; set; }
 
     public Catequizando Catequizando { get; set; } = null!;
     public BautismoCatequizando Bautismo { get; set; } = null!;

@@ -156,4 +156,31 @@ public class InscripcionCatequesisService : IInscripcionCatequesisService
             }
         };
     }
+
+    public async Task<ActualizarEstadoInscripcionCatequesisResponse?> ActualizarEstadoAsync(
+        int id,
+        ActualizarEstadoInscripcionCatequesisRequest request)
+    {
+        var inscripcion = await _context.InscripcionesCatequesis.FindAsync(id);
+
+        if (inscripcion is null)
+        {
+            return null;
+        }
+
+        inscripcion.Estado = request.Estado;
+        inscripcion.ObservacionAdministrativa = request.Observacion;
+        inscripcion.FechaActualizacionEstado = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return new ActualizarEstadoInscripcionCatequesisResponse
+        {
+            Id = inscripcion.Id,
+            Mensaje = "Estado de inscripción actualizado correctamente",
+            Estado = inscripcion.Estado,
+            ObservacionAdministrativa = inscripcion.ObservacionAdministrativa,
+            FechaActualizacionEstado = inscripcion.FechaActualizacionEstado!.Value
+        };
+    }
 }
