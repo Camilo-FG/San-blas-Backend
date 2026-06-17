@@ -22,6 +22,7 @@ namespace SanblasBackend.Data
         public DbSet<Comunion> Comuniones { get; set; }
         public DbSet<Confirmacion> Confirmaciones { get; set; }
         public DbSet<Matrimonio> Matrimonios { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -91,6 +92,23 @@ namespace SanblasBackend.Data
                 entity.Property(e => e.Correo).IsRequired();
                 entity.Property(e => e.Detalle).IsRequired();
                 entity.Property(e => e.Estado).IsRequired().HasDefaultValue("Pendiente");
+            });
+
+            //usuarios
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.UserName).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.PhoneNumber).HasMaxLength(20);
+                entity.Property(e => e.Password).IsRequired();
+                entity.Property(e => e.UserRole).IsRequired().HasDefaultValue(false);
+                entity.Property(e => e.State).IsRequired().HasDefaultValue(true);
+                entity.Property(e => e.CreationDate).IsRequired().HasDefaultValueSql("NOW()");
+
+                //indice unico
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.UserName).IsUnique();
             });
         }
     }

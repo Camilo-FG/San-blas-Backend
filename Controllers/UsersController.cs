@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using SanblasBackend.DTOs;
+using SanblasBackend.DTO;
+using SanblasBackend.Models;
 using SanblasBackend.Services;
 
 namespace SanblasBackend.Controllers
@@ -8,46 +9,99 @@ namespace SanblasBackend.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService _UserService;
+        private readonly IUserService _userService;
 
-        public UsersController(IUserService UserService) 
+        public UsersController(IUserService userService)
         {
-            _UserService = UserService;
+            _userService = userService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var results = await _UserService.GetAllUsers();
+            var results = await _userService.GetAllUsers();
             return Ok(results);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var result = await _UserService.GetUserById(id);
+            var result = await _userService.GetUserById(id);
             if (result == null) return NotFound();
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUserAccount([FromBody] UserCreateDTO dto)
+        public async Task<IActionResult> CreateUser([FromBody] UserCreateDto dto)
         {
             try
             {
-                var result = await _UserService.CreateUserAccount(dto);
-                return CreatedAtAction(nameof(GetById), new { id = result.id }, result);
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(new
+                User? currentUser = null;
+                var userIdClaim = User.FindFirst("id")?.Value;
+
+                if (userIdClaim != null)
                 {
-                    message = ex.Message,
-                    inner = ex.InnerException?.Message,
-                    innerInner = ex.InnerException?.InnerException?.Message
-                });
+                    var userDto = await _userService.GetUserById(int.Parse(userIdClaim));
+                    if (userDto != null)
+                    {
+                        currentUser = new User
+                        {
+                            Id = userDto.Id,
+                            UserName = userDto.UserName,
+                            Email = userDto.Email,
+                            PhoneNumber = userDto.PhoneNumber,
+                            UserRole = userDto.UserRole,
+                            State = userDto.State,
+                            CreationDate = userDto.CreationDate
+                        };
+                    }
+                }
+
+                //crear usuario (pasa currentUser para validar roles)
+                var result = await _userService.CreateUser(dto, currentUser);
+
+                return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
         }
-        //falta hacer un update
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto dto)
+        {
+            try
+            {
+                //obtener usuario logueado
+                var userIdClaim = User.FindFirst("id")?.Value;
+                if (userIdClaim == null)
+                    return Unauthorized(new { message = "No estás autenticado." });
+
+                var userDto = await _userService.GetUserById(int.Parse(userIdClaim));
+                if (userDto == null)
+                    return Unauthorized(new { message = "Usuario no encontrado." });
+
+                var currentUser = new User
+                {
+                    Id = userDto.Id,
+                    UserName = userDto.UserName,
+                    Email = userDto.Email,
+                    PhoneNumber = userDto.PhoneNumber,
+                    UserRole = userDto.UserRole,
+                    State = userDto.State,
+                    CreationDate = userDto.CreationDate
+                };
+
+                var result = await _userService.UpdateUser(id, dto, currentUser);
+                if (result == null) return NotFound();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }
