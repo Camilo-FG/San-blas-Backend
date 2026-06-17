@@ -20,6 +20,11 @@ builder.Services.AddScoped<IFormSacraService, FormSacraService>();
 builder.Services.AddScoped<IInscripcionCatequesisService, InscripcionCatequesisService>();
 builder.Services.AddScoped<IDonacionService, DonacionService>();
 
+builder.Services.AddScoped<IBautismoService, BautismoService>();
+builder.Services.AddScoped<IComunionService, ComunionService>();
+builder.Services.AddScoped<IConfirmacionService, ConfirmacionService>();
+builder.Services.AddScoped<IMatrimonioService, MatrimonioService>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
