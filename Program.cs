@@ -19,11 +19,8 @@ builder.Services.AddDbContext<GlobalContex>(options =>
 builder.Services.AddScoped<IFormSacraService, FormSacraService>();
 builder.Services.AddScoped<IInscripcionCatequesisService, InscripcionCatequesisService>();
 builder.Services.AddScoped<IDonacionService, DonacionService>();
-<<<<<<< HEAD
-builder.Services.AddScoped<IUserServ, UserService>();
-=======
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
->>>>>>> feature/Notificaciones-email
 
 builder.Services.AddScoped<IBautismoService, BautismoService>();
 builder.Services.AddScoped<IComunionService, ComunionService>();
