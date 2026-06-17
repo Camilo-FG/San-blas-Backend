@@ -92,6 +92,56 @@ namespace SanblasBackend.Data
                 entity.Property(e => e.Detalle).IsRequired();
                 entity.Property(e => e.Estado).IsRequired().HasDefaultValue("Pendiente");
             });
+
+            modelBuilder.Entity<Bautismo>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Nombre).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.PrimerApellido).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.SegundoApellido).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.NombreParroquia).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.Prebispero).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Cedula).IsRequired();
+                entity.Property(e => e.FechaBautismo).IsRequired();
+                entity.Property(e => e.AnnioBautismo).IsRequired();
+                entity.Property(e => e.FechaNacimiento).IsRequired();
+                entity.Property(e => e.HoraNacimiento).IsRequired();
+                entity.Property(e => e.NombreAbuelosPaternos).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.NombreAbuelosMaternos).IsRequired().HasMaxLength(200);
+            });
+
+            modelBuilder.Entity<Comunion>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Nombre).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.DiaComunion).IsRequired().HasMaxLength(10);
+                entity.Property(e => e.MesComunion).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.AnnioComunion).IsRequired();
+                entity.Property(e => e.LugarComunion).IsRequired().HasMaxLength(150);
+            });
+
+            modelBuilder.Entity<Confirmacion>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Nombre).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.DiaConfirmacion).IsRequired().HasMaxLength(10);
+                entity.Property(e => e.MesConfirmacion).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.AnnioConfirmacion).IsRequired();
+                entity.Property(e => e.LugarConfirmacion).IsRequired().HasMaxLength(150);
+            });
+
+            modelBuilder.Entity<Matrimonio>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.NombreContrayente).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.NombreContrayente2).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.DiaMatrimonio).IsRequired().HasMaxLength(10);
+                entity.Property(e => e.MesMatrimonio).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.AnnioMatrimonio).IsRequired();
+                entity.Property(e => e.LugarMatrimonio).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.Tomo).IsRequired();
+                entity.Property(e => e.Folio).IsRequired();
+            });
         }
     }
 }
