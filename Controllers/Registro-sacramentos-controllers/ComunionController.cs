@@ -1,79 +1,42 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SanblasBackend.Data;
 using SanblasBackend.DTOs.DtosRegistroSacramentos;
-using SanblasBackend.Models.EntitiesRegistroSacramentos;
+using SanblasBackend.Services;
 
-namespace SanblasBackend.Controllers
+namespace SanblasBackend.Controllers.Registro_sacramentos_controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ComunionController : ControllerBase
     {
-        private readonly GlobalContex _context;
+        private readonly IComunionService _service;
 
-        public ComunionController(GlobalContex context)
+        public ComunionController(IComunionService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ComunionDto>>> GetComuniones()
         {
-            var comuniones = await _context.Comuniones
-                .Select(c => new ComunionDto
-                {
-                    Id = c.Id,
-                    Nombre = c.Nombre,
-                    DiaComunion = c.DiaComunion,
-                    MesComunion = c.MesComunion,
-                    AnnioComunion = c.AnnioComunion,
-                    LugarComunion = c.LugarComunion
-                })
-                .ToListAsync();
-
+            var comuniones = await _service.GetAllAsync();
             return Ok(comuniones);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ComunionDto>> GetComunion(int id)
         {
-            var com union = await _context.Comuniones.FindAsync(id);
-
-            if (comunion == null)
+            var com union = await _service.GetByIdAsync(id);
+            if (com union == null)
                 return NotFound();
 
-            var dto = new ComunionDto
-            {
-                Id = com union.Id,
-                Nombre = com union.Nombre,
-                DiaComunion = com union.DiaComunion,
-                MesComunion = com union.MesComunion,
-                AnnioComunion = com union.AnnioComunion,
-                LugarComunion = com union.LugarComunion
-            };
-
-            return Ok(dto);
+            return Ok(com union);
         }
 
         [HttpPost]
         public async Task<ActionResult<ComunionDto>> CreateComunion([FromBody] ComunionDto dto)
         {
-            var com union = new Comunion
-            {
-                Nombre = dto.Nombre,
-                DiaComunion = dto.DiaComunion,
-                MesComunion = dto.MesComunion,
-                AnnioComunion = dto.AnnioComunion,
-                LugarComunion = dto.LugarComunion
-            };
-
-            _context.Comuniones.Add(com union);
-            await _context.SaveChangesAsync();
-
-            dto.Id = com union.Id;
-
-            return CreatedAtAction(nameof(GetComunion), new { id = com union.Id }, dto);
+            var created = await _service.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetComunion), new { id = created.Id }, created);
         }
 
         [HttpPut("{id}")]
@@ -82,17 +45,9 @@ namespace SanblasBackend.Controllers
             if (id != dto.Id)
                 return BadRequest("El ID de la URL no coincide con el ID del cuerpo");
 
-            var com union = await _context.Comuniones.FindAsync(id);
-            if (com union == null)
+            var updated = await _service.UpdateAsync(id, dto);
+            if (updated == null)
                 return NotFound();
-
-            com union.Nombre = dto.Nombre;
-            com union.DiaComunion = dto.DiaComunion;
-            com union.MesComunion = dto.MesComunion;
-            com union.AnnioComunion = dto.AnnioComunion;
-            com union.LugarComunion = dto.LugarComunion;
-
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -100,12 +55,9 @@ namespace SanblasBackend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComunion(int id)
         {
-            var com union = await _context.Comuniones.FindAsync(id);
-            if (com union == null)
+            var deleted = await _service.DeleteAsync(id);
+            if (!deleted)
                 return NotFound();
-
-            _context.Comuniones.Remove(com union);
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }
