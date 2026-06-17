@@ -25,11 +25,11 @@ namespace SanblasBackend.Controllers.Registro_sacramentos_controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ComunionDto>> GetComunion(int id)
         {
-            var com union = await _service.GetByIdAsync(id);
-            if (com union == null)
+            var comunion = await _service.GetByIdAsync(id);
+            if (comunion == null)
                 return NotFound();
 
-            return Ok(com union);
+            return Ok(comunion);
         }
 
         [HttpPost]

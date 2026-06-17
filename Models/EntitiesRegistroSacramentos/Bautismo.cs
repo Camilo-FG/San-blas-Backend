@@ -1,4 +1,4 @@
-namespace.SanblasBackend.Models.EntitiesRegistroSacramentos;
+namespace SanblasBackend.Models.EntitiesRegistroSacramentos;
 
 public class Bautismo
 {
@@ -16,3 +16,4 @@ public class Bautismo
     public string NombreAbuelosPaternos { get; set; } = string.Empty;
     public string NombreAbuelosMaternos { get; set; } = string.Empty;
 }
+

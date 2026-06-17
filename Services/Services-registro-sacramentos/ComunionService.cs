@@ -31,24 +31,24 @@ namespace SanblasBackend.Services
 
         public async Task<ComunionDto?> GetByIdAsync(int id)
         {
-            var com union = await _context.Comuniones.FindAsync(id);
-            if (com union == null)
+            var comunion = await _context.Comuniones.FindAsync(id);
+            if (comunion == null)
                 return null;
 
             return new ComunionDto
             {
-                Id = com union.Id,
-                Nombre = com union.Nombre,
-                DiaComunion = com union.DiaComunion,
-                MesComunion = com union.MesComunion,
-                AnnioComunion = com union.AnnioComunion,
-                LugarComunion = com union.LugarComunion
+                Id = comunion.Id,
+                Nombre = comunion.Nombre,
+                DiaComunion = comunion.DiaComunion,
+                MesComunion = comunion.MesComunion,
+                AnnioComunion = comunion.AnnioComunion,
+                LugarComunion = comunion.LugarComunion
             };
         }
 
         public async Task<ComunionDto> CreateAsync(ComunionDto dto)
         {
-            var com union = new Comunion
+            var comunion = new Comunion
             {
                 Nombre = dto.Nombre,
                 DiaComunion = dto.DiaComunion,
@@ -57,10 +57,10 @@ namespace SanblasBackend.Services
                 LugarComunion = dto.LugarComunion
             };
 
-            _context.Comuniones.Add(com union);
+            _context.Comuniones.Add(comunion);
             await _context.SaveChangesAsync();
 
-            dto.Id = com union.Id;
+            dto.Id = comunion.Id;
             return dto;
         }
 
@@ -69,15 +69,15 @@ namespace SanblasBackend.Services
             if (id != dto.Id)
                 return null;
 
-            var com union = await _context.Comuniones.FindAsync(id);
-            if (com union == null)
+            var comunion = await _context.Comuniones.FindAsync(id);
+            if (comunion == null)
                 return null;
 
-            com union.Nombre = dto.Nombre;
-            com union.DiaComunion = dto.DiaComunion;
-            com union.MesComunion = dto.MesComunion;
-            com union.AnnioComunion = dto.AnnioComunion;
-            com union.LugarComunion = dto.LugarComunion;
+            comunion.Nombre = dto.Nombre;
+            comunion.DiaComunion = dto.DiaComunion;
+            comunion.MesComunion = dto.MesComunion;
+            comunion.AnnioComunion = dto.AnnioComunion;
+            comunion.LugarComunion = dto.LugarComunion;
 
             await _context.SaveChangesAsync();
             return dto;
@@ -85,11 +85,11 @@ namespace SanblasBackend.Services
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var com union = await _context.Comuniones.FindAsync(id);
-            if (com union == null)
+            var comunion = await _context.Comuniones.FindAsync(id);
+            if (comunion == null)
                 return false;
 
-            _context.Comuniones.Remove(com union);
+            _context.Comuniones.Remove(comunion);
             await _context.SaveChangesAsync();
             return true;
         }
