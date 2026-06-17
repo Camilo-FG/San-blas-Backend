@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using SanblasBackend.DTO;
+using SanblasBackend.DTOs;
 using SanblasBackend.Models;
+using SanblasBackend.Models.EntitiesUsuarios;
 using SanblasBackend.Services;
 
 namespace SanblasBackend.Controllers

@@ -1,5 +1,6 @@
 using SanblasBackend.DTOs;
 using SanblasBackend.Models;
+using SanblasBackend.Models.EntitiesUsuarios;
 
 namespace SanblasBackend.Services
 {
