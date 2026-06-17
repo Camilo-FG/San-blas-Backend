@@ -1,4 +1,4 @@
-namespace.SanblasBackend.Models.EntitiesRegistroSacramentos;
+namespace SanblasBackend.Models.EntitiesRegistroSacramentos;
 
 
 public class Comunion
