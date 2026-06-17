@@ -19,6 +19,7 @@ builder.Services.AddDbContext<GlobalContex>(options =>
 builder.Services.AddScoped<IFormSacraService, FormSacraService>();
 builder.Services.AddScoped<IInscripcionCatequesisService, InscripcionCatequesisService>();
 builder.Services.AddScoped<IDonacionService, DonacionService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddScoped<IBautismoService, BautismoService>();
 builder.Services.AddScoped<IComunionService, ComunionService>();
