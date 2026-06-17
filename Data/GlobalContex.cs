@@ -16,6 +16,7 @@ namespace SanblasBackend.Data
         public DbSet<AdecuacionCatequizando> AdecuacionesCatequizando { get; set; }
         public DbSet<CondicionSaludCatequizando> CondicionesSaludCatequizando { get; set; }
         public DbSet<MadreCatequizando> MadresCatequizando { get; set; }
+        public DbSet<Donacion> Donaciones { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -76,6 +77,15 @@ namespace SanblasBackend.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Nombre).IsRequired();
                 entity.Property(e => e.Telefono).IsRequired();
+            });
+            modelBuilder.Entity<Donacion>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Fecha).IsRequired();
+                entity.Property(e => e.Nombre).IsRequired();
+                entity.Property(e => e.Correo).IsRequired();
+                entity.Property(e => e.Detalle).IsRequired();
+                entity.Property(e => e.Estado).IsRequired().HasDefaultValue("Pendiente");
             });
         }
     }
