@@ -59,7 +59,7 @@ namespace SanblasBackend.Services
                 string colorTexto = nuevoEstado == "Aprobado" ? "#155724" : "#721c24";
                 string colorFondo = nuevoEstado == "Aprobado" ? "#d4edda" : "#f8d7da";
 
-                string pathPlantilla = Path.Combine(AppContext.BaseDirectory, "Templates", "DonacionEstado.html");
+                string pathPlantilla = Path.Combine(AppContext.BaseDirectory, "Template", "DonacionEstado.html");
                 string cuerpoCorreo = await File.ReadAllTextAsync(pathPlantilla);
 
                 cuerpoCorreo = cuerpoCorreo
