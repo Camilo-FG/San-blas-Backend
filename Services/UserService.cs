@@ -24,11 +24,11 @@ namespace SanblasBackend.Services
             return await _context.User.FindAsync(id);
         }
 
-        public async Task<User> CreateUser( dto)  //debo de agregar el DTO
+        public async Task<User> CreateUser(UserCreateDTO dto) 
         {
             var solicitud = new User
             {
-                //aqui debo de poner los datos del DTO
+                //falta poner los datos del DTO
             };
 
             _context.Users.Add(solicitud);
@@ -36,5 +36,6 @@ namespace SanblasBackend.Services
 
             return solicitud;
         }
+        //falta el update
     }
 }

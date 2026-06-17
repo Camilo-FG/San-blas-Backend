@@ -10,7 +10,7 @@ namespace SanblasBackend.Controllers
     {
         private readonly IUserService _UserService;
 
-        public UsersController(IUserService UserService) //hay que crear este serv
+        public UsersController(IUserService UserService) 
         {
             _UserService = UserService;
         }
@@ -18,24 +18,24 @@ namespace SanblasBackend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var results = await _formSacraService.GetAllSolicitudes();
+            var results = await _UserService.GetAllUsers();
             return Ok(results);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var result = await _formSacraService.GetSolicitudById(id);
+            var result = await _UserService.GetUserById(id);
             if (result == null) return NotFound();
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateSolicitud([FromBody] SolicSacraCreateDto dto)
+        public async Task<IActionResult> CreateUserAccount([FromBody] UserCreateDTO dto)
         {
             try
             {
-                var result = await _formSacraService.CreateSolicitud(dto);
+                var result = await _UserService.CreateUserAccount(dto);
                 return CreatedAtAction(nameof(GetById), new { id = result.id }, result);
             }
             catch (System.Exception ex)
@@ -48,13 +48,6 @@ namespace SanblasBackend.Controllers
                 });
             }
         }
-
-        [HttpPatch("{id}/estado")]
-        public async Task<IActionResult> UpdateEstado(int id, [FromBody] string nuevoEstado)
-        {
-            var result = await _formSacraService.UpdateEstado(id, nuevoEstado);
-            if (result == null) return NotFound();
-            return Ok(result);
-        }
+        //falta hacer un update
     }
 }
