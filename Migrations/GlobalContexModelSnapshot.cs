@@ -139,6 +139,304 @@ namespace SanblasBackend.Migrations
                     b.ToTable("CondicionesSaludCatequizando");
                 });
 
+            modelBuilder.Entity("SanblasBackend.Models.Donacion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Anonimo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Correo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Detalle")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("Pendiente");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Telefono")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Donaciones");
+                });
+
+            modelBuilder.Entity("SanblasBackend.Models.EntitiesRegistroSacramentos.Bautismo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnnioBautismo")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Cedula")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("FechaBautismo")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("FechaNacimiento")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<TimeSpan>("HoraNacimiento")
+                        .HasColumnType("interval");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("NombreAbuelosMaternos")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("NombreAbuelosPaternos")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("NombreParroquia")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("Prebispero")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PrimerApellido")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("SegundoApellido")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Bautismos");
+                });
+
+            modelBuilder.Entity("SanblasBackend.Models.EntitiesRegistroSacramentos.Comunion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnnioComunion")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DiaComunion")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("LugarComunion")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("MesComunion")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Comuniones");
+                });
+
+            modelBuilder.Entity("SanblasBackend.Models.EntitiesRegistroSacramentos.Confirmacion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnnioConfirmacion")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DiaConfirmacion")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("LugarConfirmacion")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("MesConfirmacion")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Confirmaciones");
+                });
+
+            modelBuilder.Entity("SanblasBackend.Models.EntitiesRegistroSacramentos.Matrimonio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnnioMatrimonio")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DiaMatrimonio")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int>("Folio")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("LugarMatrimonio")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("MesMatrimonio")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("NombreContrayente")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("NombreContrayente2")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Tomo")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Matrimonios");
+                });
+
+            modelBuilder.Entity("SanblasBackend.Models.EntitiesUsuarios.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PhoneNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Role");
+
+                    b.Property<bool>("State")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Username");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("SanblasBackend.Models.Evento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("FechaFin")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("FechaInicio")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Lugar")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Publicado")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Eventos");
+                });
+
             modelBuilder.Entity("SanblasBackend.Models.FormSacra", b =>
                 {
                     b.Property<int>("id")
@@ -205,6 +503,13 @@ namespace SanblasBackend.Migrations
                         .HasColumnType("text")
                         .HasDefaultValue("Pendiente");
 
+                    b.Property<string>("FeBautismoArchivo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("FechaActualizacionEstado")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("FechaSolicitud")
                         .HasColumnType("timestamp with time zone");
 
@@ -212,9 +517,40 @@ namespace SanblasBackend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ObservacionAdministrativa")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("InscripcionesCatequesis");
+                });
+
+            modelBuilder.Entity("SanblasBackend.Models.LandingContent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("JsonData")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SectionKey")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SectionKey")
+                        .IsUnique();
+
+                    b.ToTable("LandingContents");
                 });
 
             modelBuilder.Entity("SanblasBackend.Models.MadreCatequizando", b =>
@@ -255,6 +591,71 @@ namespace SanblasBackend.Migrations
                         .IsUnique();
 
                     b.ToTable("MadresCatequizando");
+                });
+
+            modelBuilder.Entity("SanblasBackend.Models.PagoInscripcionCatequesis", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ComprobanteArchivo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("InscripcionCatequesisId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("MetodoPago")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("NumeroComprobanteSinpe")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InscripcionCatequesisId")
+                        .IsUnique();
+
+                    b.ToTable("PagosInscripcionCatequesis");
+                });
+
+            modelBuilder.Entity("SanblasBackend.Models.PersonaInscribeCatequesis", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Apellidos")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("InscripcionCatequesisId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Parentesco")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InscripcionCatequesisId")
+                        .IsUnique();
+
+                    b.ToTable("PersonasInscribeCatequesis");
                 });
 
             modelBuilder.Entity("SanblasBackend.Models.AdecuacionCatequizando", b =>
@@ -312,6 +713,28 @@ namespace SanblasBackend.Migrations
                     b.Navigation("InscripcionCatequesis");
                 });
 
+            modelBuilder.Entity("SanblasBackend.Models.PagoInscripcionCatequesis", b =>
+                {
+                    b.HasOne("SanblasBackend.Models.InscripcionCatequesis", "InscripcionCatequesis")
+                        .WithOne("Pago")
+                        .HasForeignKey("SanblasBackend.Models.PagoInscripcionCatequesis", "InscripcionCatequesisId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InscripcionCatequesis");
+                });
+
+            modelBuilder.Entity("SanblasBackend.Models.PersonaInscribeCatequesis", b =>
+                {
+                    b.HasOne("SanblasBackend.Models.InscripcionCatequesis", "InscripcionCatequesis")
+                        .WithOne("PersonaInscribe")
+                        .HasForeignKey("SanblasBackend.Models.PersonaInscribeCatequesis", "InscripcionCatequesisId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InscripcionCatequesis");
+                });
+
             modelBuilder.Entity("SanblasBackend.Models.InscripcionCatequesis", b =>
                 {
                     b.Navigation("Adecuacion")
@@ -327,6 +750,12 @@ namespace SanblasBackend.Migrations
                         .IsRequired();
 
                     b.Navigation("Madre")
+                        .IsRequired();
+
+                    b.Navigation("Pago")
+                        .IsRequired();
+
+                    b.Navigation("PersonaInscribe")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

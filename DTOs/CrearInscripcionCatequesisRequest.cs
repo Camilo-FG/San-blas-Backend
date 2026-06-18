@@ -22,6 +22,12 @@ public class CrearInscripcionCatequesisRequest
 
     [Required(ErrorMessage = "Los datos de la madre son obligatorios.")]
     public DatosMadreRequest DatosMadre { get; set; } = null!;
+
+    [Required(ErrorMessage = "Los datos de la persona que inscribe son obligatorios.")]
+    public DatosPersonaInscribeRequest DatosPersonaInscribe { get; set; } = null!;
+
+    [Required(ErrorMessage = "Los datos de pago son obligatorios.")]
+    public DatosPagoRequest DatosPago { get; set; } = null!;
 }
 
 public class DatosInscripcionRequest
@@ -30,8 +36,11 @@ public class DatosInscripcionRequest
     public string CentroCatequesis { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "El nivel a inscribirse es obligatorio.")]
-    [AllowedValues("Primero", "Sétimo", ErrorMessage = "El nivel solo puede ser 'Primero' o 'Sétimo'.")]
+    [AllowedValues("Primero", "Sétimo", ErrorMessage = InscripcionCatequesisValidaciones.MensajeNivelInvalido)]
     public string NivelAInscribirse { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "La fe de bautismo es obligatoria.")]
+    public string FeBautismoArchivo { get; set; } = string.Empty;
 }
 
 public class DatosCatequizandoRequest
@@ -43,43 +52,115 @@ public class DatosCatequizandoRequest
     public string Apellidos { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "La fecha de nacimiento es obligatoria.")]
-    [NotFutureDate]
+    [NotFutureDate(ErrorMessage = InscripcionCatequesisValidaciones.MensajeFechaNacimientoFutura)]
     public DateOnly FechaNacimiento { get; set; }
 
-    public string? DireccionExacta { get; set; }
+    [Required(ErrorMessage = "La dirección exacta del catequizando es obligatoria.")]
+    public string DireccionExacta { get; set; } = string.Empty;
 }
 
-public class DatosBautismoRequest
+public class DatosBautismoRequest : IValidatableObject
 {
-    public string? Parroquia { get; set; }
+    [Required(ErrorMessage = "La parroquia de bautismo es obligatoria.")]
+    public string Parroquia { get; set; } = string.Empty;
+
     public DateOnly? Fecha { get; set; }
+
     public string? Tomo { get; set; }
     public string? Folio { get; set; }
     public string? Asiento { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (Fecha.HasValue && !InscripcionCatequesisValidaciones.ValidarFechaNoFutura(Fecha))
+        {
+            yield return new ValidationResult(
+                InscripcionCatequesisValidaciones.MensajeFechaBautismoFutura,
+                [nameof(Fecha)]);
+        }
+    }
 }
 
-public class DatosAdecuacionRequest
+public class DatosAdecuacionRequest : IValidatableObject
 {
+    [Required(ErrorMessage = "Debe indicar si requiere adecuación en el centro educativo.")]
     public bool? RequiereAdecuacionCentroEducativo { get; set; }
+
     public string? DescripcionAdecuacion { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (RequiereAdecuacionCentroEducativo == true && string.IsNullOrWhiteSpace(DescripcionAdecuacion))
+        {
+            yield return new ValidationResult(
+                "La descripción de adecuación es obligatoria cuando requiere adecuación en el centro educativo.",
+                [nameof(DescripcionAdecuacion)]);
+        }
+    }
 }
 
-public class DatosCondicionSaludRequest
+public class DatosCondicionSaludRequest : IValidatableObject
 {
+    [Required(ErrorMessage = "Debe indicar si el catequizando es portador de enfermedad crónica.")]
     public bool? PortadorEnfermedadCronica { get; set; }
+
     public string? DescripcionEnfermedad { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (PortadorEnfermedadCronica == true && string.IsNullOrWhiteSpace(DescripcionEnfermedad))
+        {
+            yield return new ValidationResult(
+                "La descripción de la enfermedad es obligatoria cuando es portador de enfermedad crónica.",
+                [nameof(DescripcionEnfermedad)]);
+        }
+    }
 }
 
 public class DatosMadreRequest
 {
-    [Required(ErrorMessage = "El nombre de la madre es obligatorio.")]
+    [Required(ErrorMessage = "El nombre de la madre o encargada es obligatorio.")]
     public string Nombre { get; set; } = string.Empty;
 
-    public string? Apellidos { get; set; }
-    public string? DireccionExacta { get; set; }
-    public string? Ciudad { get; set; }
-    public string? Provincia { get; set; }
+    [Required(ErrorMessage = "Los apellidos de la madre o encargada son obligatorios.")]
+    public string Apellidos { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "El teléfono es obligatorio.")]
+    [Required(ErrorMessage = "La dirección exacta de la madre o encargada es obligatoria.")]
+    public string DireccionExacta { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "La ciudad de la madre o encargada es obligatoria.")]
+    public string Ciudad { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "La provincia de la madre o encargada es obligatoria.")]
+    public string Provincia { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "El teléfono de la madre o encargada es obligatorio.")]
     public string Telefono { get; set; } = string.Empty;
+}
+
+public class DatosPersonaInscribeRequest
+{
+    [Required(ErrorMessage = "El nombre de la persona que inscribe es obligatorio.")]
+    public string Nombre { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Los apellidos de la persona que inscribe son obligatorios.")]
+    public string Apellidos { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "El parentesco es obligatorio.")]
+    public string Parentesco { get; set; } = string.Empty;
+}
+
+public class DatosPagoRequest
+{
+    [Required(ErrorMessage = "El método de pago es obligatorio.")]
+    public string MetodoPago { get; set; } = "SINPE Móvil";
+
+    [Required(ErrorMessage = "El número de comprobante SINPE es obligatorio.")]
+    public string NumeroComprobanteSinpe { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "El comprobante de pago es obligatorio.")]
+    public string ComprobanteArchivo { get; set; } = string.Empty;
+
+    [Range(1, double.MaxValue, ErrorMessage = "El monto debe ser mayor que cero.")]
+    public decimal Monto { get; set; } = 5000;
 }

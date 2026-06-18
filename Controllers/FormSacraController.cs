@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SanblasBackend.DTOs;
 using SanblasBackend.Services;
@@ -16,6 +17,7 @@ namespace SanblasBackend.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var results = await _formSacraService.GetAllSolicitudes();
@@ -23,6 +25,7 @@ namespace SanblasBackend.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _formSacraService.GetSolicitudById(id);
@@ -31,6 +34,7 @@ namespace SanblasBackend.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateSolicitud([FromBody] SolicSacraCreateDto dto)
         {
             try
@@ -50,6 +54,7 @@ namespace SanblasBackend.Controllers
         }
 
         [HttpPatch("{id}/estado")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateEstado(int id, [FromBody] string nuevoEstado)
         {
             var result = await _formSacraService.UpdateEstado(id, nuevoEstado);

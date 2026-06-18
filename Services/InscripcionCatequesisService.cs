@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using SanblasBackend.Data;
 using SanblasBackend.DTOs;
 using SanblasBackend.Models;
@@ -21,6 +22,7 @@ public class InscripcionCatequesisService : IInscripcionCatequesisService
             NivelAInscribirse = request.DatosInscripcion.NivelAInscribirse,
             Estado = "Pendiente",
             FechaSolicitud = DateTime.UtcNow,
+            FeBautismoArchivo = request.DatosInscripcion.FeBautismoArchivo,
             Catequizando = new Catequizando
             {
                 Nombre = request.DatosCatequizando.Nombre,
@@ -54,6 +56,19 @@ public class InscripcionCatequesisService : IInscripcionCatequesisService
                 Ciudad = request.DatosMadre.Ciudad,
                 Provincia = request.DatosMadre.Provincia,
                 Telefono = request.DatosMadre.Telefono
+            },
+            PersonaInscribe = new PersonaInscribeCatequesis
+            {
+                Nombre = request.DatosPersonaInscribe.Nombre,
+                Apellidos = request.DatosPersonaInscribe.Apellidos,
+                Parentesco = request.DatosPersonaInscribe.Parentesco
+            },
+            Pago = new PagoInscripcionCatequesis
+            {
+                MetodoPago = request.DatosPago.MetodoPago,
+                NumeroComprobanteSinpe = request.DatosPago.NumeroComprobanteSinpe,
+                ComprobanteArchivo = request.DatosPago.ComprobanteArchivo,
+                Monto = request.DatosPago.Monto
             }
         };
 
@@ -66,6 +81,137 @@ public class InscripcionCatequesisService : IInscripcionCatequesisService
             Mensaje = "Inscripción a catequesis registrada correctamente",
             Estado = inscripcion.Estado,
             FechaSolicitud = inscripcion.FechaSolicitud
+        };
+    }
+
+    public async Task<IEnumerable<InscripcionCatequesisResumenResponse>> ObtenerInscripcionesAsync(string? estado)
+    {
+        var query = _context.InscripcionesCatequesis
+            .Include(i => i.Catequizando)
+            .Include(i => i.Madre)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(estado))
+        {
+            query = query.Where(i => i.Estado == estado);
+        }
+
+        var inscripciones = await query
+            .OrderByDescending(i => i.FechaSolicitud)
+            .ToListAsync();
+
+        return inscripciones.Select(i => new InscripcionCatequesisResumenResponse
+        {
+            Id = i.Id,
+            NombreCatequizando = $"{i.Catequizando.Nombre} {i.Catequizando.Apellidos}".Trim(),
+            CentroCatequesis = i.CentroCatequesis,
+            NivelAInscribirse = i.NivelAInscribirse,
+            Estado = i.Estado,
+            FechaSolicitud = i.FechaSolicitud,
+            TelefonoEncargada = i.Madre.Telefono
+        });
+    }
+
+    public async Task<InscripcionCatequesisDetalleResponse?> ObtenerInscripcionPorIdAsync(int id)
+    {
+        var inscripcion = await _context.InscripcionesCatequesis
+            .Include(i => i.Catequizando)
+            .Include(i => i.Bautismo)
+            .Include(i => i.Adecuacion)
+            .Include(i => i.CondicionSalud)
+            .Include(i => i.Madre)
+            .Include(i => i.Pago)
+            .Include(i => i.PersonaInscribe)
+            .FirstOrDefaultAsync(i => i.Id == id);
+
+        if (inscripcion is null)
+        {
+            return null;
+        }
+
+        return new InscripcionCatequesisDetalleResponse
+        {
+            Id = inscripcion.Id,
+            CentroCatequesis = inscripcion.CentroCatequesis,
+            NivelAInscribirse = inscripcion.NivelAInscribirse,
+            Estado = inscripcion.Estado,
+            FechaSolicitud = inscripcion.FechaSolicitud,
+            FeBautismoArchivo = inscripcion.FeBautismoArchivo,
+            ObservacionAdministrativa = inscripcion.ObservacionAdministrativa,
+            Catequizando = new CatequizandoDetalleResponse
+            {
+                Nombre = inscripcion.Catequizando.Nombre,
+                Apellidos = inscripcion.Catequizando.Apellidos,
+                FechaNacimiento = inscripcion.Catequizando.FechaNacimiento,
+                DireccionExacta = inscripcion.Catequizando.DireccionExacta ?? string.Empty
+            },
+            Bautismo = new BautismoDetalleResponse
+            {
+                Parroquia = inscripcion.Bautismo.Parroquia ?? string.Empty,
+                Fecha = inscripcion.Bautismo.Fecha,
+                Tomo = inscripcion.Bautismo.Tomo ?? string.Empty,
+                Folio = inscripcion.Bautismo.Folio ?? string.Empty,
+                Asiento = inscripcion.Bautismo.Asiento ?? string.Empty
+            },
+            Adecuacion = new AdecuacionDetalleResponse
+            {
+                RequiereAdecuacionCentroEducativo = inscripcion.Adecuacion.RequiereAdecuacionCentroEducativo,
+                DescripcionAdecuacion = inscripcion.Adecuacion.DescripcionAdecuacion ?? string.Empty
+            },
+            CondicionSalud = new CondicionSaludDetalleResponse
+            {
+                PortadorEnfermedadCronica = inscripcion.CondicionSalud.PortadorEnfermedadCronica,
+                DescripcionEnfermedad = inscripcion.CondicionSalud.DescripcionEnfermedad ?? string.Empty
+            },
+            Madre = new MadreDetalleResponse
+            {
+                Nombre = inscripcion.Madre.Nombre,
+                Apellidos = inscripcion.Madre.Apellidos,
+                DireccionExacta = inscripcion.Madre.DireccionExacta ?? string.Empty,
+                Ciudad = inscripcion.Madre.Ciudad ?? string.Empty,
+                Provincia = inscripcion.Madre.Provincia ?? string.Empty,
+                Telefono = inscripcion.Madre.Telefono
+            },
+            PersonaInscribe = new PersonaInscribeDetalleResponse
+            {
+                Nombre = inscripcion.PersonaInscribe.Nombre,
+                Apellidos = inscripcion.PersonaInscribe.Apellidos,
+                Parentesco = inscripcion.PersonaInscribe.Parentesco
+            },
+            Pago = new PagoDetalleResponse
+            {
+                MetodoPago = inscripcion.Pago.MetodoPago,
+                NumeroComprobanteSinpe = inscripcion.Pago.NumeroComprobanteSinpe,
+                ComprobanteArchivo = inscripcion.Pago.ComprobanteArchivo,
+                Monto = inscripcion.Pago.Monto
+            }
+        };
+    }
+
+    public async Task<ActualizarEstadoInscripcionCatequesisResponse?> ActualizarEstadoAsync(
+        int id,
+        ActualizarEstadoInscripcionCatequesisRequest request)
+    {
+        var inscripcion = await _context.InscripcionesCatequesis.FindAsync(id);
+
+        if (inscripcion is null)
+        {
+            return null;
+        }
+
+        inscripcion.Estado = request.Estado;
+        inscripcion.ObservacionAdministrativa = request.Observacion;
+        inscripcion.FechaActualizacionEstado = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return new ActualizarEstadoInscripcionCatequesisResponse
+        {
+            Id = inscripcion.Id,
+            Mensaje = "Estado de inscripción actualizado correctamente",
+            Estado = inscripcion.Estado,
+            ObservacionAdministrativa = inscripcion.ObservacionAdministrativa,
+            FechaActualizacionEstado = inscripcion.FechaActualizacionEstado!.Value
         };
     }
 }
