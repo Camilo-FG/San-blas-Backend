@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -15,6 +16,8 @@ public class InscripcionesCatequesisController : ControllerBase
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        NumberHandling = JsonNumberHandling.AllowReadingFromString,
     };
 
     private readonly IInscripcionCatequesisService _inscripcionCatequesisService;
@@ -104,7 +107,7 @@ public class InscripcionesCatequesisController : ControllerBase
         {
             request = JsonSerializer.Deserialize<CrearInscripcionCatequesisRequest>(payload, JsonOptions);
         }
-        catch
+        catch (JsonException)
         {
             return BadRequest(new { mensaje = "El formato de los datos de inscripción no es válido." });
         }

@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -61,7 +62,11 @@ builder.Services.AddScoped<IComunionService, ComunionService>();
 builder.Services.AddScoped<IConfirmacionService, ConfirmacionService>();
 builder.Services.AddScoped<IMatrimonioService, MatrimonioService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpClient();
 
