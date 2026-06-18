@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SanblasBackend.Data;
@@ -11,9 +12,11 @@ using SanblasBackend.Data;
 namespace SanblasBackend.Migrations
 {
     [DbContext(typeof(GlobalContex))]
-    partial class GlobalContexModelSnapshot : ModelSnapshot
+    [Migration("20260617223726_User")]
+    partial class User
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,7 @@ namespace SanblasBackend.Migrations
                     b.HasIndex("InscripcionCatequesisId")
                         .IsUnique();
 
-                    b.ToTable("AdecuacionesCatequizando", (string)null);
+                    b.ToTable("AdecuacionesCatequizando");
                 });
 
             modelBuilder.Entity("SanblasBackend.Models.BautismoCatequizando", b =>
@@ -78,7 +81,7 @@ namespace SanblasBackend.Migrations
                     b.HasIndex("InscripcionCatequesisId")
                         .IsUnique();
 
-                    b.ToTable("BautismosCatequizando", (string)null);
+                    b.ToTable("BautismosCatequizando");
                 });
 
             modelBuilder.Entity("SanblasBackend.Models.Catequizando", b =>
@@ -111,7 +114,7 @@ namespace SanblasBackend.Migrations
                     b.HasIndex("InscripcionCatequesisId")
                         .IsUnique();
 
-                    b.ToTable("Catequizandos", (string)null);
+                    b.ToTable("Catequizandos");
                 });
 
             modelBuilder.Entity("SanblasBackend.Models.CondicionSaludCatequizando", b =>
@@ -136,7 +139,7 @@ namespace SanblasBackend.Migrations
                     b.HasIndex("InscripcionCatequesisId")
                         .IsUnique();
 
-                    b.ToTable("CondicionesSaludCatequizando", (string)null);
+                    b.ToTable("CondicionesSaludCatequizando");
                 });
 
             modelBuilder.Entity("SanblasBackend.Models.Donacion", b =>
@@ -459,7 +462,7 @@ namespace SanblasBackend.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("FormSacras", (string)null);
+                    b.ToTable("FormSacras");
                 });
 
             modelBuilder.Entity("SanblasBackend.Models.InscripcionCatequesis", b =>
@@ -495,7 +498,7 @@ namespace SanblasBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("InscripcionesCatequesis", (string)null);
+                    b.ToTable("InscripcionesCatequesis");
                 });
 
             modelBuilder.Entity("SanblasBackend.Models.MadreCatequizando", b =>
@@ -535,7 +538,7 @@ namespace SanblasBackend.Migrations
                     b.HasIndex("InscripcionCatequesisId")
                         .IsUnique();
 
-                    b.ToTable("MadresCatequizando", (string)null);
+                    b.ToTable("MadresCatequizando");
                 });
 
             modelBuilder.Entity("SanblasBackend.Models.AdecuacionCatequizando", b =>
