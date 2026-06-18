@@ -19,6 +19,8 @@ namespace SanblasBackend.Data
         public DbSet<AdecuacionCatequizando> AdecuacionesCatequizando { get; set; }
         public DbSet<CondicionSaludCatequizando> CondicionesSaludCatequizando { get; set; }
         public DbSet<MadreCatequizando> MadresCatequizando { get; set; }
+        public DbSet<PagoInscripcionCatequesis> PagosInscripcionCatequesis { get; set; }
+        public DbSet<PersonaInscribeCatequesis> PersonasInscribeCatequesis { get; set; }
         public DbSet<Donacion> Donaciones { get; set; }
 
          public DbSet<Bautismo> Bautismos { get; set; }
@@ -46,6 +48,7 @@ namespace SanblasBackend.Data
                 entity.Property(e => e.NivelAInscribirse).IsRequired();
                 entity.Property(e => e.Estado).IsRequired().HasDefaultValue("Pendiente");
                 entity.Property(e => e.FechaSolicitud).IsRequired();
+                entity.Property(e => e.FeBautismoArchivo).IsRequired();
 
                 entity.HasOne(e => e.Catequizando)
                     .WithOne(c => c.InscripcionCatequesis)
@@ -71,6 +74,33 @@ namespace SanblasBackend.Data
                     .WithOne(m => m.InscripcionCatequesis)
                     .HasForeignKey<MadreCatequizando>(m => m.InscripcionCatequesisId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Pago)
+                    .WithOne(p => p.InscripcionCatequesis)
+                    .HasForeignKey<PagoInscripcionCatequesis>(p => p.InscripcionCatequesisId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.PersonaInscribe)
+                    .WithOne(p => p.InscripcionCatequesis)
+                    .HasForeignKey<PersonaInscribeCatequesis>(p => p.InscripcionCatequesisId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<PagoInscripcionCatequesis>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.MetodoPago).IsRequired();
+                entity.Property(e => e.NumeroComprobanteSinpe).IsRequired();
+                entity.Property(e => e.ComprobanteArchivo).IsRequired();
+                entity.Property(e => e.Monto).IsRequired();
+            });
+
+            modelBuilder.Entity<PersonaInscribeCatequesis>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Nombre).IsRequired();
+                entity.Property(e => e.Apellidos).IsRequired();
+                entity.Property(e => e.Parentesco).IsRequired();
             });
 
             modelBuilder.Entity<Catequizando>(entity =>

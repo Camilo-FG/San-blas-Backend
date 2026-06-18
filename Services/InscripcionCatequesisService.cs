@@ -22,6 +22,7 @@ public class InscripcionCatequesisService : IInscripcionCatequesisService
             NivelAInscribirse = request.DatosInscripcion.NivelAInscribirse,
             Estado = "Pendiente",
             FechaSolicitud = DateTime.UtcNow,
+            FeBautismoArchivo = request.DatosInscripcion.FeBautismoArchivo,
             Catequizando = new Catequizando
             {
                 Nombre = request.DatosCatequizando.Nombre,
@@ -55,6 +56,19 @@ public class InscripcionCatequesisService : IInscripcionCatequesisService
                 Ciudad = request.DatosMadre.Ciudad,
                 Provincia = request.DatosMadre.Provincia,
                 Telefono = request.DatosMadre.Telefono
+            },
+            PersonaInscribe = new PersonaInscribeCatequesis
+            {
+                Nombre = request.DatosPersonaInscribe.Nombre,
+                Apellidos = request.DatosPersonaInscribe.Apellidos,
+                Parentesco = request.DatosPersonaInscribe.Parentesco
+            },
+            Pago = new PagoInscripcionCatequesis
+            {
+                MetodoPago = request.DatosPago.MetodoPago,
+                NumeroComprobanteSinpe = request.DatosPago.NumeroComprobanteSinpe,
+                ComprobanteArchivo = request.DatosPago.ComprobanteArchivo,
+                Monto = request.DatosPago.Monto
             }
         };
 
@@ -106,6 +120,8 @@ public class InscripcionCatequesisService : IInscripcionCatequesisService
             .Include(i => i.Adecuacion)
             .Include(i => i.CondicionSalud)
             .Include(i => i.Madre)
+            .Include(i => i.Pago)
+            .Include(i => i.PersonaInscribe)
             .FirstOrDefaultAsync(i => i.Id == id);
 
         if (inscripcion is null)
@@ -120,6 +136,8 @@ public class InscripcionCatequesisService : IInscripcionCatequesisService
             NivelAInscribirse = inscripcion.NivelAInscribirse,
             Estado = inscripcion.Estado,
             FechaSolicitud = inscripcion.FechaSolicitud,
+            FeBautismoArchivo = inscripcion.FeBautismoArchivo,
+            ObservacionAdministrativa = inscripcion.ObservacionAdministrativa,
             Catequizando = new CatequizandoDetalleResponse
             {
                 Nombre = inscripcion.Catequizando.Nombre,
@@ -153,6 +171,19 @@ public class InscripcionCatequesisService : IInscripcionCatequesisService
                 Ciudad = inscripcion.Madre.Ciudad ?? string.Empty,
                 Provincia = inscripcion.Madre.Provincia ?? string.Empty,
                 Telefono = inscripcion.Madre.Telefono
+            },
+            PersonaInscribe = new PersonaInscribeDetalleResponse
+            {
+                Nombre = inscripcion.PersonaInscribe.Nombre,
+                Apellidos = inscripcion.PersonaInscribe.Apellidos,
+                Parentesco = inscripcion.PersonaInscribe.Parentesco
+            },
+            Pago = new PagoDetalleResponse
+            {
+                MetodoPago = inscripcion.Pago.MetodoPago,
+                NumeroComprobanteSinpe = inscripcion.Pago.NumeroComprobanteSinpe,
+                ComprobanteArchivo = inscripcion.Pago.ComprobanteArchivo,
+                Monto = inscripcion.Pago.Monto
             }
         };
     }
