@@ -5,6 +5,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+using SanblasBackend.Utils;
+
 namespace SanblasBackend.Utils;
 
 public static class TokenGenerator
@@ -15,7 +17,7 @@ public static class TokenGenerator
         {
             new Claim (ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim (ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.UserRole ? "Admin" : "User")
+            new Claim(ClaimTypes.Role, UserRoles.ToJwtRole(user.Role))
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey));

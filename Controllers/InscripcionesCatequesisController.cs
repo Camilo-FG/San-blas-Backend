@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SanblasBackend.DTOs;
@@ -18,6 +19,7 @@ public class InscripcionesCatequesisController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ListarInscripciones([FromQuery] string? estado)
     {
         string? estadoNormalizado = null;
@@ -35,6 +37,7 @@ public class InscripcionesCatequesisController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ObtenerInscripcionPorId(int id)
     {
         if (!InscripcionCatequesisValidaciones.EsIdValido(id))
@@ -53,6 +56,7 @@ public class InscripcionesCatequesisController : ControllerBase
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> CrearInscripcion([FromBody] CrearInscripcionCatequesisRequest request)
     {
         if (!ModelState.IsValid)
@@ -72,6 +76,7 @@ public class InscripcionesCatequesisController : ControllerBase
     }
 
     [HttpPut("{id:int}/estado")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ActualizarEstado(
         int id,
         [FromBody] ActualizarEstadoInscripcionCatequesisRequest request)

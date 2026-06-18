@@ -12,8 +12,8 @@ using SanblasBackend.Data;
 namespace SanblasBackend.Migrations
 {
     [DbContext(typeof(GlobalContex))]
-    [Migration("20260618042835_AddPagoPersonaInscribeInscripcionCatequesis")]
-    partial class AddPagoPersonaInscribeInscripcionCatequesis
+    [Migration("20260618050328_AddEventos")]
+    partial class AddEventos
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -402,6 +402,42 @@ namespace SanblasBackend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("SanblasBackend.Models.Evento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("FechaFin")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("FechaInicio")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Lugar")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Publicado")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Eventos");
                 });
 
             modelBuilder.Entity("SanblasBackend.Models.FormSacra", b =>

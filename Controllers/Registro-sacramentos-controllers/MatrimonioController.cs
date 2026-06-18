@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SanblasBackend.DTOs.DtosRegistroSacramentos;
 using SanblasBackend.Services;
@@ -6,6 +7,7 @@ namespace SanblasBackend.Controllers.Registro_sacramentos_controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class MatrimonioController : ControllerBase
     {
         private readonly IMatrimonioService _service;
