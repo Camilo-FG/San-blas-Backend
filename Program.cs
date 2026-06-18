@@ -85,10 +85,18 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+var enableSwagger =
+    app.Environment.IsDevelopment() ||
+    builder.Configuration.GetValue<bool>("EnableSwagger", true);
+
+if (enableSwagger)
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Parroquia San Blas API v1");
+        options.RoutePrefix = "swagger";
+    });
 }
 
 // CORS
