@@ -28,6 +28,16 @@ builder.Services.AddScoped<IConfirmacionService, ConfirmacionService>();
 builder.Services.AddScoped<IMatrimonioService, MatrimonioService>();
 
 builder.Services.AddControllers();
+// Configure CORS to allow frontend requests during development
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -37,9 +47,15 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    // In development skip HTTPS redirection to avoid port/SSL issues
+}
+else
+{
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
+// Use CORS before other middleware that handles requests
+app.UseCors("AllowFrontend");
 
 app.UseAuthorization();
 
