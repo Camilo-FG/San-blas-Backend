@@ -55,6 +55,7 @@ builder.Services.AddScoped<IBautismoService, BautismoService>();
 builder.Services.AddScoped<IComunionService, ComunionService>();
 builder.Services.AddScoped<IConfirmacionService, ConfirmacionService>();
 builder.Services.AddScoped<IMatrimonioService, MatrimonioService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
