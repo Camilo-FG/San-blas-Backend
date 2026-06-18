@@ -1,6 +1,8 @@
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using SanblasBackend.Data;
-using SanblasBackend.Models;
+using SanblasBackend.Models.EntitiesUsuarios;
 
 namespace SanblasBackend.Services;
 
@@ -22,9 +24,17 @@ public class AuthenticationService : IAuthenticationService
     {
         // En un entorno real, deberíamos usar hashing para las contraseñas.
         // Por ahora, validaremos contra la base de datos.
+        var hashedPassword = HashPassword(password);
         var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+            .FirstOrDefaultAsync(u => u.Email == email && u.Password == hashedPassword && u.State);
 
         return user;
+    }
+
+    private static string HashPassword(string password)
+    {
+        using var sha256 = SHA256.Create();
+        var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+        return Convert.ToBase64String(hashedBytes);
     }
 }

@@ -1,6 +1,6 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using SanblasBackend.DTOs;
-using SanblasBackend.Models;
 using SanblasBackend.Models.EntitiesUsuarios;
 using SanblasBackend.Services;
 
@@ -38,7 +38,7 @@ namespace SanblasBackend.Controllers
             try
             {
                 User? currentUser = null;
-                var userIdClaim = User.FindFirst("id")?.Value;
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 if (userIdClaim != null)
                 {
@@ -75,7 +75,7 @@ namespace SanblasBackend.Controllers
             try
             {
                 //obtener usuario logueado
-                var userIdClaim = User.FindFirst("id")?.Value;
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (userIdClaim == null)
                     return Unauthorized(new { message = "No estás autenticado." });
 
@@ -103,13 +103,6 @@ namespace SanblasBackend.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-        }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserCreateDTO dto)
-        {
-            var result = await _UserService.UpdateUser(id, dto);
-            if (result == null) return NotFound();
-            return Ok(result);
         }
     }
 }

@@ -29,7 +29,6 @@ builder.Services.AddScoped<IInscripcionCatequesisService, InscripcionCatequesisS
 builder.Services.AddScoped<IDonacionService, DonacionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IUserService, UserService>();
 
 // Authentication & Authorization
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
@@ -97,7 +96,7 @@ builder.Services.AddCors(options =>
                 .AllowAnyHeader()
                 .AllowCredentials();
         });
-
+});
 
 var app = builder.Build();
 
@@ -110,10 +109,6 @@ app.UseCors("AllowSpecificOrigins");
 app.UseHttpsRedirection();
 
 app.UseRouting();
-
-app.UseCors("AllowAll");
-
-app.UseAuthorization();
 
 app.UseAuthentication();
 app.UseAuthorization();
