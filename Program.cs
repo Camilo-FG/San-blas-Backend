@@ -63,6 +63,7 @@ builder.Services.AddScoped<IMatrimonioService, MatrimonioService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpClient();
 
 // CORS - Permitir frontend (local + producción vía CORS_ORIGINS)
 var corsOrigins = builder.Configuration["CORS_ORIGINS"]?
