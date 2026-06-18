@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SanblasBackend.Models;
 using SanblasBackend.Models.EntitiesRegistroSacramentos;
 using SanblasBackend.Models.EntitiesUsuarios;
+using System.Linq;
 
 namespace SanblasBackend.Data
 {
@@ -146,21 +147,34 @@ namespace SanblasBackend.Data
                 entity.Property(e => e.Folio).IsRequired();
             });
 
-            //usuarios
+            //usuarios (mapeo al esquema actual de la tabla en PostgreSQL)
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.UserName).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.PhoneNumber).HasMaxLength(20);
-                entity.Property(e => e.Password).IsRequired();
-                entity.Property(e => e.UserRole).IsRequired().HasDefaultValue(false);
-                entity.Property(e => e.State).IsRequired().HasDefaultValue(true);
-                entity.Property(e => e.CreationDate).IsRequired().HasDefaultValueSql("NOW()");
 
-                //indice unico
-                entity.HasIndex(e => e.Email).IsUnique();
-                entity.HasIndex(e => e.UserName).IsUnique();
+                entity.Property(e => e.UserName)
+                    .HasColumnName("Username")
+                    .IsRequired();
+
+                entity.Property(e => e.Email).IsRequired();
+
+                entity.Property(e => e.PhoneNumber)
+                    .HasConversion(
+                        v => int.Parse(string.Concat(v.Where(char.IsDigit))),
+                        v => v.ToString("D8")
+                    );
+
+                entity.Property(e => e.Password).IsRequired();
+
+                entity.Property(e => e.UserRole)
+                    .HasColumnName("Role")
+                    .HasConversion(
+                        v => v ? "admin" : "user",
+                        v => v.Equals("admin", StringComparison.OrdinalIgnoreCase)
+                    );
+
+                entity.Property(e => e.State).IsRequired();
+                entity.Property(e => e.CreationDate).IsRequired();
             });
         }
     }

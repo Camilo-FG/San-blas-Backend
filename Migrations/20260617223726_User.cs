@@ -71,25 +71,6 @@ namespace SanblasBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Donaciones",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Anonimo = table.Column<bool>(type: "boolean", nullable: false),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    Correo = table.Column<string>(type: "text", nullable: false),
-                    Telefono = table.Column<string>(type: "text", nullable: true),
-                    Detalle = table.Column<string>(type: "text", nullable: false),
-                    Estado = table.Column<string>(type: "text", nullable: false, defaultValue: "Pendiente")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Donaciones", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Matrimonios",
                 columns: table => new
                 {
@@ -108,6 +89,9 @@ namespace SanblasBackend.Migrations
                 {
                     table.PrimaryKey("PK_Matrimonios", x => x.Id);
                 });
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.CreateTable(
                 name: "Users",
@@ -152,9 +136,6 @@ namespace SanblasBackend.Migrations
 
             migrationBuilder.DropTable(
                 name: "Confirmaciones");
-
-            migrationBuilder.DropTable(
-                name: "Donaciones");
 
             migrationBuilder.DropTable(
                 name: "Matrimonios");
