@@ -28,6 +28,8 @@ builder.Services.AddScoped<IFormSacraService, FormSacraService>();
 builder.Services.AddScoped<IInscripcionCatequesisService, InscripcionCatequesisService>();
 builder.Services.AddScoped<IDonacionService, DonacionService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Authentication & Authorization
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
@@ -50,7 +52,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddScoped<IBautismoService, BautismoService>();
+builder.Services.AddScoped<IComunionService, ComunionService>();
+builder.Services.AddScoped<IConfirmacionService, ConfirmacionService>();
+builder.Services.AddScoped<IMatrimonioService, MatrimonioService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -79,12 +84,36 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins",
+        policy =>
+        {
+            policy.WithOrigins(
+                    "http://localhost:5173"
+                )
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        });
+
+
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
+
+app.UseCors("AllowSpecificOrigins");
+
 app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors("AllowAll");
+
+app.UseAuthorization();
 
 app.UseAuthentication();
 app.UseAuthorization();
