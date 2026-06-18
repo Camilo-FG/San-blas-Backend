@@ -64,16 +64,28 @@ builder.Services.AddScoped<IMatrimonioService, MatrimonioService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// CORS - Permitir frontend
+// CORS - Permitir frontend (local + producción vía CORS_ORIGINS)
+var corsOrigins = builder.Configuration["CORS_ORIGINS"]?
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    .ToList() ?? new List<string>();
+
+foreach (var origin in new[]
+         {
+             "http://localhost:5173",
+             "http://localhost:5174",
+             "http://localhost:5175",
+             "http://127.0.0.1:5173",
+         })
+{
+    if (!corsOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+        corsOrigins.Add(origin);
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:5173",
-                "http://localhost:5174",
-                "http://localhost:5175"
-              )
+        policy.WithOrigins(corsOrigins.ToArray())
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
