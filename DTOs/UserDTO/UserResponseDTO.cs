@@ -8,6 +8,6 @@ namespace SanblasBackend.DTOs
         public string PhoneNumber { get; set; } = string.Empty;
         public bool UserRole { get; set; }
         public bool State { get; set; }
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; set; } //
     }
 }
