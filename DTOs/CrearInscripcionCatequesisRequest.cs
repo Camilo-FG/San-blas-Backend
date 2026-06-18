@@ -22,6 +22,12 @@ public class CrearInscripcionCatequesisRequest
 
     [Required(ErrorMessage = "Los datos de la madre son obligatorios.")]
     public DatosMadreRequest DatosMadre { get; set; } = null!;
+
+    [Required(ErrorMessage = "Los datos de la persona que inscribe son obligatorios.")]
+    public DatosPersonaInscribeRequest DatosPersonaInscribe { get; set; } = null!;
+
+    [Required(ErrorMessage = "Los datos de pago son obligatorios.")]
+    public DatosPagoRequest DatosPago { get; set; } = null!;
 }
 
 public class DatosInscripcionRequest
@@ -32,6 +38,9 @@ public class DatosInscripcionRequest
     [Required(ErrorMessage = "El nivel a inscribirse es obligatorio.")]
     [AllowedValues("Primero", "Sétimo", ErrorMessage = InscripcionCatequesisValidaciones.MensajeNivelInvalido)]
     public string NivelAInscribirse { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "La fe de bautismo es obligatoria.")]
+    public string FeBautismoArchivo { get; set; } = string.Empty;
 }
 
 public class DatosCatequizandoRequest
@@ -127,4 +136,31 @@ public class DatosMadreRequest
 
     [Required(ErrorMessage = "El teléfono de la madre o encargada es obligatorio.")]
     public string Telefono { get; set; } = string.Empty;
+}
+
+public class DatosPersonaInscribeRequest
+{
+    [Required(ErrorMessage = "El nombre de la persona que inscribe es obligatorio.")]
+    public string Nombre { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Los apellidos de la persona que inscribe son obligatorios.")]
+    public string Apellidos { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "El parentesco es obligatorio.")]
+    public string Parentesco { get; set; } = string.Empty;
+}
+
+public class DatosPagoRequest
+{
+    [Required(ErrorMessage = "El método de pago es obligatorio.")]
+    public string MetodoPago { get; set; } = "SINPE Móvil";
+
+    [Required(ErrorMessage = "El número de comprobante SINPE es obligatorio.")]
+    public string NumeroComprobanteSinpe { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "El comprobante de pago es obligatorio.")]
+    public string ComprobanteArchivo { get; set; } = string.Empty;
+
+    [Range(1, double.MaxValue, ErrorMessage = "El monto debe ser mayor que cero.")]
+    public decimal Monto { get; set; } = 5000;
 }
