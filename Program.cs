@@ -28,6 +28,8 @@ builder.Services.AddScoped<IInscripcionCatequesisService, InscripcionCatequesisS
 builder.Services.AddScoped<IDonacionService, DonacionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IEventoService, EventoService>();
 
 // Authentication & Authorization
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();

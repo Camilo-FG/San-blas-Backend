@@ -22,6 +22,7 @@ namespace SanblasBackend.Data
         public DbSet<PagoInscripcionCatequesis> PagosInscripcionCatequesis { get; set; }
         public DbSet<PersonaInscribeCatequesis> PersonasInscribeCatequesis { get; set; }
         public DbSet<Donacion> Donaciones { get; set; }
+        public DbSet<Evento> Eventos { get; set; }
 
          public DbSet<Bautismo> Bautismos { get; set; }
         public DbSet<Comunion> Comuniones { get; set; }
@@ -127,6 +128,16 @@ namespace SanblasBackend.Data
                 entity.Property(e => e.Estado).IsRequired().HasDefaultValue("Pendiente");
             });
 
+            modelBuilder.Entity<Evento>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Titulo).IsRequired();
+                entity.Property(e => e.Descripcion).IsRequired();
+                entity.Property(e => e.FechaInicio).IsRequired();
+                entity.Property(e => e.Lugar).IsRequired();
+                entity.Property(e => e.Publicado).IsRequired().HasDefaultValue(true);
+            });
+
             modelBuilder.Entity<Bautismo>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -196,12 +207,9 @@ namespace SanblasBackend.Data
 
                 entity.Property(e => e.Password).IsRequired();
 
-                entity.Property(e => e.UserRole)
+                entity.Property(e => e.Role)
                     .HasColumnName("Role")
-                    .HasConversion(
-                        v => v ? "admin" : "user",
-                        v => v.Equals("admin", StringComparison.OrdinalIgnoreCase)
-                    );
+                    .IsRequired();
 
                 entity.Property(e => e.State).IsRequired();
                 entity.Property(e => e.CreationDate).IsRequired();

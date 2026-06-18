@@ -1,10 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SanblasBackend.Data;
 using SanblasBackend.DTOs;
-using SanblasBackend.Models;
 using SanblasBackend.Models.EntitiesUsuarios;
-using System.Security.Cryptography;
-using System.Text;
+using SanblasBackend.Utils;
 
 namespace SanblasBackend.Services
 {
@@ -27,7 +25,7 @@ namespace SanblasBackend.Services
                 UserName = u.UserName,
                 Email = u.Email,
                 PhoneNumber = u.PhoneNumber,
-                UserRole = u.UserRole,
+                Role = u.Role,
                 State = u.State,
                 CreationDate = u.CreationDate
             });
@@ -44,7 +42,7 @@ namespace SanblasBackend.Services
                 UserName = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
-                UserRole = user.UserRole,
+                Role = user.Role,
                 State = user.State,
                 CreationDate = user.CreationDate
             };
@@ -52,28 +50,23 @@ namespace SanblasBackend.Services
 
         public async Task<UserResponseDto> CreateUser(UserCreateDto dto, User? currentUser)
         {
-            //validacion de email único
             if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
                 throw new Exception("El email ya está registrado.");
 
-            //validacion de username único
             if (await _context.Users.AnyAsync(u => u.UserName == dto.UserName))
                 throw new Exception("El nombre de usuario ya está en uso.");
 
-            //validacion de contraseñas que coincidan
             if (dto.Password != dto.ConfirmPassword)
                 throw new Exception("Las contraseñas no coinciden.");
 
-            //validacion de contraseña de un mínimo de 8 caracteres <- ya esta en el dto pero solo por si acaso
             if (dto.Password.Length < 8)
                 throw new Exception("La contraseña debe tener al menos 8 caracteres.");
 
-            bool roleToSave = false; //usuario sin permisos de admin por defecto
+            var roleToSave = UserRoles.User;
 
-            //si hay usuario logueado con el rol admin entonces usa el rol del dto
-            if (currentUser != null && currentUser.UserRole == true)
+            if (currentUser != null && UserRoles.IsAdmin(currentUser.Role))
             {
-                roleToSave = dto.UserRole ?? false; 
+                roleToSave = UserRoles.Normalize(dto.Role);
             }
 
             var newUser = new User
@@ -81,10 +74,10 @@ namespace SanblasBackend.Services
                 UserName = dto.UserName,
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
-                Password = HashPassword(dto.Password), 
-                UserRole = roleToSave,
+                Password = PasswordHasher.Hash(dto.Password),
+                Role = roleToSave,
                 State = true,
-                CreationDate = DateTime.Now
+                CreationDate = DateTime.UtcNow
             };
 
             _context.Users.Add(newUser);
@@ -96,7 +89,7 @@ namespace SanblasBackend.Services
                 UserName = newUser.UserName,
                 Email = newUser.Email,
                 PhoneNumber = newUser.PhoneNumber,
-                UserRole = newUser.UserRole,
+                Role = newUser.Role,
                 State = newUser.State,
                 CreationDate = newUser.CreationDate
             };
@@ -104,11 +97,10 @@ namespace SanblasBackend.Services
 
         public async Task<UserResponseDto?> UpdateUser(int id, UserUpdateDto dto, User currentUser)
         {
-          
             var user = await _context.Users.FindAsync(id);
             if (user == null) return null;
 
-            if (currentUser.UserRole != true && currentUser.Id != id)
+            if (!UserRoles.IsAdmin(currentUser.Role) && currentUser.Id != id)
                 throw new Exception("No tienes permiso para actualizar este usuario.");
 
             if (!string.IsNullOrEmpty(dto.Email) && dto.Email != user.Email)
@@ -131,7 +123,7 @@ namespace SanblasBackend.Services
                 if (dto.Password.Length < 8)
                     throw new Exception("La contraseña debe tener al menos 8 caracteres.");
 
-                user.Password = HashPassword(dto.Password);
+                user.Password = PasswordHasher.Hash(dto.Password);
             }
 
             if (!string.IsNullOrEmpty(dto.UserName))
@@ -143,11 +135,10 @@ namespace SanblasBackend.Services
             if (!string.IsNullOrEmpty(dto.PhoneNumber))
                 user.PhoneNumber = dto.PhoneNumber;
 
-            //solo el admin puede cambiar rol y estado
-            if (currentUser.UserRole == true)
+            if (UserRoles.IsAdmin(currentUser.Role))
             {
-                if (dto.UserRole.HasValue)
-                    user.UserRole = dto.UserRole.Value;
+                if (!string.IsNullOrWhiteSpace(dto.Role))
+                    user.Role = UserRoles.Normalize(dto.Role);
 
                 if (dto.State.HasValue)
                     user.State = dto.State.Value;
@@ -161,17 +152,10 @@ namespace SanblasBackend.Services
                 UserName = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
-                UserRole = user.UserRole,
+                Role = user.Role,
                 State = user.State,
                 CreationDate = user.CreationDate
             };
-        }
-
-        private string HashPassword(string password)
-        {
-            using var sha256 = SHA256.Create();
-            var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(hashedBytes);
         }
     }
 }

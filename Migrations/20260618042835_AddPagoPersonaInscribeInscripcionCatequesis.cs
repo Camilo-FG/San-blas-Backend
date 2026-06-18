@@ -26,7 +26,7 @@ namespace SanblasBackend.Migrations
                 newName: "Username");
 
             migrationBuilder.RenameColumn(
-                name: "UserRole",
+                name: "Role",
                 table: "Users",
                 newName: "Role");
 
@@ -170,7 +170,7 @@ namespace SanblasBackend.Migrations
             migrationBuilder.RenameColumn(
                 name: "Role",
                 table: "Users",
-                newName: "UserRole");
+                newName: "Role");
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserName",
@@ -218,7 +218,7 @@ namespace SanblasBackend.Migrations
                 oldType: "timestamp with time zone");
 
             migrationBuilder.AlterColumn<bool>(
-                name: "UserRole",
+                name: "Role",
                 table: "Users",
                 type: "boolean",
                 nullable: false,

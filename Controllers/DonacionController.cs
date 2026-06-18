@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SanblasBackend.DTOs;
-using SanblasBackend.Models;
 using SanblasBackend.Services;
 
 namespace SanblasBackend.Controllers
@@ -11,22 +11,21 @@ namespace SanblasBackend.Controllers
     {
         private readonly IDonacionService _donacionService;
 
-        // Inyección del servicio
         public DonacionController(IDonacionService donacionService)
         {
             _donacionService = donacionService;
         }
 
-        //api/Donacion (Para el panel de administración)
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var result = await _donacionService.GetAllDonaciones();
             return Ok(result);
         }
 
-        //{id} (Buscar una donación específica)
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _donacionService.GetDonacionById(id);
@@ -34,8 +33,8 @@ namespace SanblasBackend.Controllers
             return Ok(result);
         }
 
-        //api/Donacion (Endpoint PÚBLICO para registrar una donación desde el Formulario Frontend)
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateDonacion([FromBody] DonacionCreateDto dto)
         {
             try
@@ -54,8 +53,8 @@ namespace SanblasBackend.Controllers
             }
         }
 
-        //api/Donacion/{id}/estado (Endpoint de Gestión)
         [HttpPatch("{id}/estado")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateEstado(int id, [FromBody] string nuevoEstado)
         {
             var result = await _donacionService.UpdateEstado(id, nuevoEstado);
