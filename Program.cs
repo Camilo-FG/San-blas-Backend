@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using SanblasBackend.Data;
 using SanblasBackend.Models;
 using SanblasBackend.Services;
-using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,72 +50,44 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Mis servicios
 builder.Services.AddScoped<IBautismoService, BautismoService>();
 builder.Services.AddScoped<IComunionService, ComunionService>();
 builder.Services.AddScoped<IConfirmacionService, ConfirmacionService>();
 builder.Services.AddScoped<IMatrimonioService, MatrimonioService>();
-builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddControllers();
-// Configure CORS to allow frontend requests during development
+builder.Services.AddEndpointsApiExplorer();
+
+// CORS - Permitir frontend
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins(
+                "http://localhost:5173",
+                "http://localhost:5174",
+                "http://localhost:5175"
+              )
+              .AllowAnyMethod()
               .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo { Title = "San Blas Backend API", Version = "v1" });
-
-    // Configuración para usar el token en Swagger
-    var securityScheme = new Microsoft.OpenApi.OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        In = Microsoft.OpenApi.ParameterLocation.Header,
-        Type = Microsoft.OpenApi.SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        Description = "Escribe 'Bearer' [espacio] y luego tu token."
-    };
-
-    c.AddSecurityDefinition("Bearer", securityScheme);
-
-    c.AddSecurityRequirement(_ => new Microsoft.OpenApi.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.OpenApiSecuritySchemeReference("Bearer"),
-            new List<string>()
-        }
+              .AllowCredentials();
     });
 });
 
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigins",
-        policy =>
-        {
-            policy.WithOrigins(
-                    "http://localhost:5173"
-                )
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials();
-        });
-});
+// ✅ SWAGGER SIMPLIFICADO (sin autenticación)
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-
-app.UseCors("AllowSpecificOrigins");
-
+// CORS
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
