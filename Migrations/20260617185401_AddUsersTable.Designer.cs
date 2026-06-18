@@ -328,14 +328,14 @@ namespace SanblasBackend.Migrations
                     b.Property<int>("PhoneNumber")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Role")
+                    b.Property<string>("UserRole")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("State")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text");
 

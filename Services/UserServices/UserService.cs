@@ -56,7 +56,7 @@ namespace SanblasBackend.Services
             if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
                 throw new Exception("El email ya está registrado.");
 
-            //validacion de username único
+            //validacion de UserName único
             if (await _context.Users.AnyAsync(u => u.UserName == dto.UserName))
                 throw new Exception("El nombre de usuario ya está en uso.");
 
@@ -68,12 +68,12 @@ namespace SanblasBackend.Services
             if (dto.Password.Length < 8)
                 throw new Exception("La contraseña debe tener al menos 8 caracteres.");
 
-            bool roleToSave = false; //usuario sin permisos de admin por defecto
+            bool UserRoleToSave = false; //usuario sin permisos de admin por defecto
 
             //si hay usuario logueado con el rol admin entonces usa el rol del dto
             if (currentUser != null && currentUser.UserRole == true)
             {
-                roleToSave = dto.UserRole ?? false; 
+                UserRoleToSave = dto.UserRole ?? false; 
             }
 
             var newUser = new User
@@ -82,7 +82,7 @@ namespace SanblasBackend.Services
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
                 Password = HashPassword(dto.Password), 
-                UserRole = roleToSave,
+                UserRole = UserRoleToSave,
                 State = true,
                 CreationDate = DateTime.Now
             };

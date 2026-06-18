@@ -103,7 +103,7 @@ namespace SanblasBackend.Migrations
                     Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     PhoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     Password = table.Column<string>(type: "text", nullable: false),
-                    UserRole = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    UserUserRole = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     State = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
                 },

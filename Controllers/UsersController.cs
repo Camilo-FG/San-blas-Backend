@@ -58,7 +58,7 @@ namespace SanblasBackend.Controllers
                     }
                 }
 
-                //crear usuario (pasa currentUser para validar roles)
+                //crear usuario (pasa currentUser para validar UserRoles)
                 var result = await _userService.CreateUser(dto, currentUser);
 
                 return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);

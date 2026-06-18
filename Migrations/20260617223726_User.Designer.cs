@@ -401,7 +401,7 @@ namespace SanblasBackend.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<bool>("UserRole")
+                    b.Property<bool>("UserUserRole")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);

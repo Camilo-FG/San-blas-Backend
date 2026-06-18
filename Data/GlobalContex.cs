@@ -153,7 +153,7 @@ namespace SanblasBackend.Data
                 entity.HasKey(e => e.Id);
 
                 entity.Property(e => e.UserName)
-                    .HasColumnName("Username")
+                    .HasColumnName("UserName")
                     .IsRequired();
 
                 entity.Property(e => e.Email).IsRequired();
@@ -166,8 +166,8 @@ namespace SanblasBackend.Data
 
                 entity.Property(e => e.Password).IsRequired();
 
-                entity.Property(e => e.UserRole)
-                    .HasColumnName("Role")
+                entity.Property(e => e.UserRole) 
+                    .HasColumnName("UserRole")
                     .HasConversion(
                         v => v ? "admin" : "user",
                         v => v.Equals("admin", StringComparison.OrdinalIgnoreCase)

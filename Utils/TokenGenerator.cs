@@ -15,7 +15,7 @@ public static class TokenGenerator
         {
             new Claim (ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim (ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.UserRole ? "Admin" : "User")
+            new Claim(ClaimTypes.UserRole, user.UserRole ? "Admin" : "User")
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey));
