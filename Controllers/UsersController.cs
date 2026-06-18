@@ -104,5 +104,12 @@ namespace SanblasBackend.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserCreateDTO dto)
+        {
+            var result = await _UserService.UpdateUser(id, dto);
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
     }
 }
