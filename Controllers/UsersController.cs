@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SanblasBackend.DTOs;
 using SanblasBackend.Models.EntitiesUsuarios;
@@ -8,6 +9,7 @@ namespace SanblasBackend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -18,6 +20,7 @@ namespace SanblasBackend.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var results = await _userService.GetAllUsers();
@@ -25,6 +28,7 @@ namespace SanblasBackend.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _userService.GetUserById(id);
@@ -33,34 +37,16 @@ namespace SanblasBackend.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateUser([FromBody] UserCreateDto dto)
         {
             try
             {
-                User? currentUser = null;
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var currentUser = await GetCurrentUserAsync();
+                if (currentUser is null)
+                    return Unauthorized(new { message = "No estás autenticado." });
 
-                if (userIdClaim != null)
-                {
-                    var userDto = await _userService.GetUserById(int.Parse(userIdClaim));
-                    if (userDto != null)
-                    {
-                        currentUser = new User
-                        {
-                            Id = userDto.Id,
-                            UserName = userDto.UserName,
-                            Email = userDto.Email,
-                            PhoneNumber = userDto.PhoneNumber,
-                            UserRole = userDto.UserRole,
-                            State = userDto.State,
-                            CreationDate = userDto.CreationDate
-                        };
-                    }
-                }
-
-                //crear usuario (pasa currentUser para validar roles)
                 var result = await _userService.CreateUser(dto, currentUser);
-
                 return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
             }
             catch (Exception ex)
@@ -70,29 +56,14 @@ namespace SanblasBackend.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto dto)
         {
             try
             {
-                //obtener usuario logueado
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userIdClaim == null)
+                var currentUser = await GetCurrentUserAsync();
+                if (currentUser is null)
                     return Unauthorized(new { message = "No estás autenticado." });
-
-                var userDto = await _userService.GetUserById(int.Parse(userIdClaim));
-                if (userDto == null)
-                    return Unauthorized(new { message = "Usuario no encontrado." });
-
-                var currentUser = new User
-                {
-                    Id = userDto.Id,
-                    UserName = userDto.UserName,
-                    Email = userDto.Email,
-                    PhoneNumber = userDto.PhoneNumber,
-                    UserRole = userDto.UserRole,
-                    State = userDto.State,
-                    CreationDate = userDto.CreationDate
-                };
 
                 var result = await _userService.UpdateUser(id, dto, currentUser);
                 if (result == null) return NotFound();
@@ -103,6 +74,26 @@ namespace SanblasBackend.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
+        }
+
+        private async Task<User?> GetCurrentUserAsync()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim is null) return null;
+
+            var userDto = await _userService.GetUserById(int.Parse(userIdClaim));
+            if (userDto is null) return null;
+
+            return new User
+            {
+                Id = userDto.Id,
+                UserName = userDto.UserName,
+                Email = userDto.Email,
+                PhoneNumber = userDto.PhoneNumber,
+                Role = userDto.Role,
+                State = userDto.State,
+                CreationDate = userDto.CreationDate
+            };
         }
     }
 }

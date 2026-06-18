@@ -20,7 +20,7 @@ namespace SanblasBackend.DTOs
         [Compare("Password", ErrorMessage = "Las contraseñas no coinciden.")]
         public string? ConfirmPassword { get; set; }
 
-        public bool? UserRole { get; set; } //solo el admin puede moficar esto
+        public string? Role { get; set; }
         public bool? State { get; set; }    //solo el admin puede moficar esto
     }
 }
