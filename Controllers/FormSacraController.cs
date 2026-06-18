@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SanblasBackend.DTOs;
 using SanblasBackend.Services;
@@ -50,6 +51,7 @@ namespace SanblasBackend.Controllers
         }
 
         [HttpPatch("{id}/estado")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateEstado(int id, [FromBody] string nuevoEstado)
         {
             var result = await _formSacraService.UpdateEstado(id, nuevoEstado);
