@@ -86,14 +86,16 @@ public class InscripcionesCatequesisController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPost("con-archivos")]
     [AllowAnonymous]
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> CrearInscripcionConArchivos(
-        [FromForm] string payload,
-        [FromForm] IFormFile feBautismoArchivo,
-        [FromForm] IFormFile comprobanteArchivo)
+        [FromForm] CrearInscripcionConArchivosForm form)
     {
+        var payload = form.Payload;
+        var feBautismoArchivo = form.FeBautismoArchivo;
+        var comprobanteArchivo = form.ComprobanteArchivo;
+
         if (string.IsNullOrWhiteSpace(payload))
             return BadRequest(new { mensaje = "Los datos de la inscripción son obligatorios." });
 
