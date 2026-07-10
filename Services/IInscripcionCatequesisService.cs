@@ -6,6 +6,9 @@ public interface IInscripcionCatequesisService
 {
     Task<CrearInscripcionCatequesisResponse> CrearInscripcionAsync(CrearInscripcionCatequesisRequest request);
     Task<IEnumerable<InscripcionCatequesisResumenResponse>> ObtenerInscripcionesAsync(string? estado);
+    Task<IReadOnlyList<InscripcionCatequesisExportacionFila>> ObtenerInscripcionesParaExportacionAsync(
+        string estado,
+        CancellationToken cancellationToken = default);
     Task<InscripcionCatequesisDetalleResponse?> ObtenerInscripcionPorIdAsync(int id);
     Task<ActualizarEstadoInscripcionCatequesisResponse?> ActualizarEstadoAsync(int id, ActualizarEstadoInscripcionCatequesisRequest request);
 }
