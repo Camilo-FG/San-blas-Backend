@@ -22,13 +22,16 @@ public class InscripcionesCatequesisController : ControllerBase
 
     private readonly IInscripcionCatequesisService _inscripcionCatequesisService;
     private readonly IExportarInscripcionesCatequesisService _exportarInscripcionesService;
+    private readonly IFileStorageService _fileStorageService;
 
     public InscripcionesCatequesisController(
         IInscripcionCatequesisService inscripcionCatequesisService,
-        IExportarInscripcionesCatequesisService exportarInscripcionesService)
+        IExportarInscripcionesCatequesisService exportarInscripcionesService,
+        IFileStorageService fileStorageService)
     {
         _inscripcionCatequesisService = inscripcionCatequesisService;
         _exportarInscripcionesService = exportarInscripcionesService;
+        _fileStorageService = fileStorageService;
     }
 
     [HttpGet]

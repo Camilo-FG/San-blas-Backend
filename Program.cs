@@ -28,6 +28,7 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IFormSacraService, FormSacraService>();
 builder.Services.AddScoped<IInscripcionCatequesisService, InscripcionCatequesisService>();
 builder.Services.AddScoped<IExportarInscripcionesCatequesisService, ExportarInscripcionesCatequesisService>();
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IDonacionService, DonacionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
