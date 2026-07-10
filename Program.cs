@@ -1,6 +1,8 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using SanblasBackend.Data;
 using SanblasBackend.Models;
@@ -32,6 +34,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IEventoService, EventoService>();
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddScoped<ILandingContentService, LandingContentService>();
 
 // Authentication & Authorization
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
@@ -60,19 +64,36 @@ builder.Services.AddScoped<IComunionService, ComunionService>();
 builder.Services.AddScoped<IConfirmacionService, ConfirmacionService>();
 builder.Services.AddScoped<IMatrimonioService, MatrimonioService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpClient();
 
-// CORS - Permitir frontend
+// CORS - Permitir frontend (local + producción vía CORS_ORIGINS)
+var corsOrigins = builder.Configuration["CORS_ORIGINS"]?
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    .ToList() ?? new List<string>();
+
+foreach (var origin in new[]
+         {
+             "http://localhost:5173",
+             "http://localhost:5174",
+             "http://localhost:5175",
+             "http://127.0.0.1:5173",
+         })
+{
+    if (!corsOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+        corsOrigins.Add(origin);
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:5173",
-                "http://localhost:5174",
-                "http://localhost:5175"
-              )
+        policy.WithOrigins(corsOrigins.ToArray())
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -84,16 +105,32 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+var enableSwagger =
+    app.Environment.IsDevelopment() ||
+    builder.Configuration.GetValue<bool>("EnableSwagger", true);
+
+if (enableSwagger)
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Parroquia San Blas API v1");
+        options.RoutePrefix = "swagger";
+    });
 }
 
 // CORS
 app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
+
+var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "uploads");
+Directory.CreateDirectory(uploadsPath);
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads",
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

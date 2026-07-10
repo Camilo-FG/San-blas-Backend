@@ -165,50 +165,50 @@ public class InscripcionCatequesisService : IInscripcionCatequesisService
             ObservacionAdministrativa = inscripcion.ObservacionAdministrativa,
             Catequizando = new CatequizandoDetalleResponse
             {
-                Nombre = inscripcion.Catequizando.Nombre,
-                Apellidos = inscripcion.Catequizando.Apellidos,
-                FechaNacimiento = inscripcion.Catequizando.FechaNacimiento,
-                DireccionExacta = inscripcion.Catequizando.DireccionExacta ?? string.Empty
+                Nombre = inscripcion.Catequizando?.Nombre ?? string.Empty,
+                Apellidos = inscripcion.Catequizando?.Apellidos ?? string.Empty,
+                FechaNacimiento = inscripcion.Catequizando?.FechaNacimiento ?? default,
+                DireccionExacta = inscripcion.Catequizando?.DireccionExacta ?? string.Empty
             },
             Bautismo = new BautismoDetalleResponse
             {
-                Parroquia = inscripcion.Bautismo.Parroquia ?? string.Empty,
-                Fecha = inscripcion.Bautismo.Fecha,
-                Tomo = inscripcion.Bautismo.Tomo ?? string.Empty,
-                Folio = inscripcion.Bautismo.Folio ?? string.Empty,
-                Asiento = inscripcion.Bautismo.Asiento ?? string.Empty
+                Parroquia = inscripcion.Bautismo?.Parroquia ?? string.Empty,
+                Fecha = inscripcion.Bautismo?.Fecha,
+                Tomo = inscripcion.Bautismo?.Tomo ?? string.Empty,
+                Folio = inscripcion.Bautismo?.Folio ?? string.Empty,
+                Asiento = inscripcion.Bautismo?.Asiento ?? string.Empty
             },
             Adecuacion = new AdecuacionDetalleResponse
             {
-                RequiereAdecuacionCentroEducativo = inscripcion.Adecuacion.RequiereAdecuacionCentroEducativo,
-                DescripcionAdecuacion = inscripcion.Adecuacion.DescripcionAdecuacion ?? string.Empty
+                RequiereAdecuacionCentroEducativo = inscripcion.Adecuacion?.RequiereAdecuacionCentroEducativo,
+                DescripcionAdecuacion = inscripcion.Adecuacion?.DescripcionAdecuacion ?? string.Empty
             },
             CondicionSalud = new CondicionSaludDetalleResponse
             {
-                PortadorEnfermedadCronica = inscripcion.CondicionSalud.PortadorEnfermedadCronica,
-                DescripcionEnfermedad = inscripcion.CondicionSalud.DescripcionEnfermedad ?? string.Empty
+                PortadorEnfermedadCronica = inscripcion.CondicionSalud?.PortadorEnfermedadCronica,
+                DescripcionEnfermedad = inscripcion.CondicionSalud?.DescripcionEnfermedad ?? string.Empty
             },
             Madre = new MadreDetalleResponse
             {
-                Nombre = inscripcion.Madre.Nombre,
-                Apellidos = inscripcion.Madre.Apellidos,
-                DireccionExacta = inscripcion.Madre.DireccionExacta ?? string.Empty,
-                Ciudad = inscripcion.Madre.Ciudad ?? string.Empty,
-                Provincia = inscripcion.Madre.Provincia ?? string.Empty,
-                Telefono = inscripcion.Madre.Telefono
+                Nombre = inscripcion.Madre?.Nombre ?? string.Empty,
+                Apellidos = inscripcion.Madre?.Apellidos ?? string.Empty,
+                DireccionExacta = inscripcion.Madre?.DireccionExacta ?? string.Empty,
+                Ciudad = inscripcion.Madre?.Ciudad ?? string.Empty,
+                Provincia = inscripcion.Madre?.Provincia ?? string.Empty,
+                Telefono = inscripcion.Madre?.Telefono ?? string.Empty
             },
             PersonaInscribe = new PersonaInscribeDetalleResponse
             {
-                Nombre = inscripcion.PersonaInscribe.Nombre,
-                Apellidos = inscripcion.PersonaInscribe.Apellidos,
-                Parentesco = inscripcion.PersonaInscribe.Parentesco
+                Nombre = inscripcion.PersonaInscribe?.Nombre ?? string.Empty,
+                Apellidos = inscripcion.PersonaInscribe?.Apellidos ?? string.Empty,
+                Parentesco = inscripcion.PersonaInscribe?.Parentesco ?? string.Empty
             },
             Pago = new PagoDetalleResponse
             {
-                MetodoPago = inscripcion.Pago.MetodoPago,
-                NumeroComprobanteSinpe = inscripcion.Pago.NumeroComprobanteSinpe,
-                ComprobanteArchivo = inscripcion.Pago.ComprobanteArchivo,
-                Monto = inscripcion.Pago.Monto
+                MetodoPago = inscripcion.Pago?.MetodoPago ?? string.Empty,
+                NumeroComprobanteSinpe = inscripcion.Pago?.NumeroComprobanteSinpe ?? string.Empty,
+                ComprobanteArchivo = inscripcion.Pago?.ComprobanteArchivo ?? string.Empty,
+                Monto = inscripcion.Pago?.Monto ?? 0
             }
         };
     }
