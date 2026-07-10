@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -11,15 +13,25 @@ namespace SanblasBackend.Controllers;
 [Route("api/inscripciones-catequesis")]
 public class InscripcionesCatequesisController : ControllerBase
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        NumberHandling = JsonNumberHandling.AllowReadingFromString,
+    };
+
     private readonly IInscripcionCatequesisService _inscripcionCatequesisService;
     private readonly IExportarInscripcionesCatequesisService _exportarInscripcionesService;
+    private readonly IFileStorageService _fileStorageService;
 
     public InscripcionesCatequesisController(
         IInscripcionCatequesisService inscripcionCatequesisService,
-        IExportarInscripcionesCatequesisService exportarInscripcionesService)
+        IExportarInscripcionesCatequesisService exportarInscripcionesService,
+        IFileStorageService fileStorageService)
     {
         _inscripcionCatequesisService = inscripcionCatequesisService;
         _exportarInscripcionesService = exportarInscripcionesService;
+        _fileStorageService = fileStorageService;
     }
 
     [HttpGet]
@@ -96,6 +108,7 @@ public class InscripcionesCatequesisController : ControllerBase
 
     [HttpPost]
     [AllowAnonymous]
+    [Consumes("application/json")]
     public async Task<IActionResult> CrearInscripcion([FromBody] CrearInscripcionCatequesisRequest request)
     {
         if (!ModelState.IsValid)
@@ -105,6 +118,58 @@ public class InscripcionesCatequesisController : ControllerBase
 
         try
         {
+            var response = await _inscripcionCatequesisService.CrearInscripcionAsync(request);
+            return StatusCode(StatusCodes.Status201Created, response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
+    }
+
+    [HttpPost("con-archivos")]
+    [AllowAnonymous]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> CrearInscripcionConArchivos(
+        [FromForm] CrearInscripcionConArchivosForm form)
+    {
+        var payload = form.Payload;
+        var feBautismoArchivo = form.FeBautismoArchivo;
+        var comprobanteArchivo = form.ComprobanteArchivo;
+
+        if (string.IsNullOrWhiteSpace(payload))
+            return BadRequest(new { mensaje = "Los datos de la inscripción son obligatorios." });
+
+        CrearInscripcionCatequesisRequest? request;
+        try
+        {
+            request = JsonSerializer.Deserialize<CrearInscripcionCatequesisRequest>(payload, JsonOptions);
+        }
+        catch (JsonException)
+        {
+            return BadRequest(new { mensaje = "El formato de los datos de inscripción no es válido." });
+        }
+
+        if (request is null)
+            return BadRequest(new { mensaje = "Los datos de la inscripción son obligatorios." });
+
+        try
+        {
+            if (feBautismoArchivo is null || feBautismoArchivo.Length == 0)
+                return BadRequest(new { mensaje = "La fe de bautismo es obligatoria." });
+
+            if (comprobanteArchivo is null || comprobanteArchivo.Length == 0)
+                return BadRequest(new { mensaje = "El comprobante de pago es obligatorio." });
+
+            request.DatosInscripcion.FeBautismoArchivo =
+                await _fileStorageService.SaveCatequesisFileAsync(feBautismoArchivo, "fe-bautismo");
+
+            request.DatosPago.ComprobanteArchivo =
+                await _fileStorageService.SaveCatequesisFileAsync(comprobanteArchivo, "comprobante");
+
+            if (!TryValidateModel(request))
+                return BadRequest(CrearRespuestaValidacion(ModelState));
+
             var response = await _inscripcionCatequesisService.CrearInscripcionAsync(request);
             return StatusCode(StatusCodes.Status201Created, response);
         }
