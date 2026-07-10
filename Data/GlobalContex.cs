@@ -29,10 +29,19 @@ namespace SanblasBackend.Data
         public DbSet<Confirmacion> Confirmaciones { get; set; }
         public DbSet<Matrimonio> Matrimonios { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<LandingContent> LandingContents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<LandingContent>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.SectionKey).IsUnique();
+                entity.Property(e => e.SectionKey).IsRequired().HasMaxLength(64);
+                entity.Property(e => e.JsonData).IsRequired();
+            });
 
             modelBuilder.Entity<FormSacra>(entity =>
             {

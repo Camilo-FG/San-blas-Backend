@@ -57,9 +57,19 @@ namespace SanblasBackend.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateEstado(int id, [FromBody] string nuevoEstado)
         {
-            var result = await _donacionService.UpdateEstado(id, nuevoEstado);
-            if (result == null) return NotFound();
-            return Ok(result);
+            var (donacion, correoEnviado) = await _donacionService.UpdateEstado(id, nuevoEstado);
+            if (donacion == null) return NotFound();
+
+            return Ok(new
+            {
+                donacion,
+                correoEnviado,
+                mensajeCorreo = correoEnviado
+                    ? "Solicitud rechazada y correo enviado al usuario."
+                    : donacion.Estado == "Rechazado"
+                        ? "Solicitud rechazada, pero no se pudo enviar el correo. Revise EmailSettings en Railway."
+                        : "Estado actualizado.",
+            });
         }
     }
 }

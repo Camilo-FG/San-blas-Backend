@@ -8,5 +8,5 @@ public interface IDonacionService
     Task<IEnumerable<Donacion>> GetAllDonaciones();
     Task<Donacion?> GetDonacionById(int id);
     Task<Donacion> CreateDonacion(DonacionCreateDto dto);
-    Task<Donacion?> UpdateEstado(int id, string nuevoEstado);
+    Task<(Donacion? Donacion, bool CorreoEnviado)> UpdateEstado(int id, string nuevoEstado);
 }
