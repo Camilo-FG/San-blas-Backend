@@ -112,6 +112,31 @@ public class InscripcionCatequesisService : IInscripcionCatequesisService
         });
     }
 
+    public async Task<IReadOnlyList<InscripcionCatequesisExportacionFila>> ObtenerInscripcionesParaExportacionAsync(
+        string estado,
+        CancellationToken cancellationToken = default)
+    {
+        var inscripciones = await _context.InscripcionesCatequesis
+            .AsNoTracking()
+            .Include(i => i.Catequizando)
+            .Where(i => i.Estado == estado)
+            .OrderByDescending(i => i.FechaSolicitud)
+            .ToListAsync(cancellationToken);
+
+        return inscripciones
+            .Select(i => new InscripcionCatequesisExportacionFila
+            {
+                Nombre = i.Catequizando.Nombre,
+                Apellidos = i.Catequizando.Apellidos,
+                FechaNacimiento = i.Catequizando.FechaNacimiento,
+                CentroCatequesis = i.CentroCatequesis,
+                NivelAInscribirse = i.NivelAInscribirse,
+                Estado = i.Estado,
+                FechaSolicitud = i.FechaSolicitud,
+            })
+            .ToList();
+    }
+
     public async Task<InscripcionCatequesisDetalleResponse?> ObtenerInscripcionPorIdAsync(int id)
     {
         var inscripcion = await _context.InscripcionesCatequesis

@@ -21,14 +21,14 @@ public class InscripcionesCatequesisController : ControllerBase
     };
 
     private readonly IInscripcionCatequesisService _inscripcionCatequesisService;
-    private readonly IFileStorageService _fileStorageService;
+    private readonly IExportarInscripcionesCatequesisService _exportarInscripcionesService;
 
     public InscripcionesCatequesisController(
         IInscripcionCatequesisService inscripcionCatequesisService,
-        IFileStorageService fileStorageService)
+        IExportarInscripcionesCatequesisService exportarInscripcionesService)
     {
         _inscripcionCatequesisService = inscripcionCatequesisService;
-        _fileStorageService = fileStorageService;
+        _exportarInscripcionesService = exportarInscripcionesService;
     }
 
     [HttpGet]
@@ -47,6 +47,41 @@ public class InscripcionesCatequesisController : ControllerBase
 
         var inscripciones = await _inscripcionCatequesisService.ObtenerInscripcionesAsync(estadoNormalizado);
         return Ok(inscripciones);
+    }
+
+    [HttpGet("exportar")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ExportarInscripciones(
+        [FromQuery] string estado,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(estado))
+        {
+            return BadRequest(new { mensaje = "El estado es obligatorio." });
+        }
+
+        if (!InscripcionCatequesisValidaciones.EsEstadoValido(estado, out var estadoNormalizado))
+        {
+            return BadRequest(new { mensaje = InscripcionCatequesisValidaciones.MensajeEstadoInvalido });
+        }
+
+        try
+        {
+            var archivo = await _exportarInscripcionesService.ExportarAsync(
+                estadoNormalizado!,
+                cancellationToken);
+
+            return File(
+                archivo.Contenido,
+                archivo.ContentType,
+                archivo.NombreArchivo);
+        }
+        catch (Exception)
+        {
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                new { mensaje = "No se pudo generar el archivo de exportación." });
+        }
     }
 
     [HttpGet("{id:int}")]
